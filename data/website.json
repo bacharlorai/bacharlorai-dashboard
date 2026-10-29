@@ -1,0 +1,28 @@
+{
+ "updated": "2026-10-29T00:14+00:00",
+ "propertyId": "561298290",
+ "kpis": {
+  "current": {
+   "activeUsers": 0.0,
+   "newUsers": 0.0,
+   "sessions": 0.0,
+   "screenPageViews": 0.0,
+   "engagementRate": 0.0,
+   "averageSessionDuration": 0.0
+  },
+  "previous": {
+   "activeUsers": 0.0,
+   "newUsers": 0.0,
+   "sessions": 0.0,
+   "screenPageViews": 0.0,
+   "engagementRate": 0.0,
+   "averageSessionDuration": 0.0
+  }
+ },
+ "daily": [],
+ "topPages": [],
+ "channels": [],
+ "countries": [],
+ "devices": [],
+ "sources": []
+}
