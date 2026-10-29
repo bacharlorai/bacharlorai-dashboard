@@ -54,7 +54,7 @@ def run(dimensions, metrics, date_ranges, order_metric=None, limit=None):
 
 
 KPI_METRICS = ["activeUsers", "newUsers", "sessions", "screenPageViews",
-               "engagementRate", "averageSessionDuration"]
+               "engagementRate", "averageSessionDuration", "bounceRate"]
 blank = {m: 0.0 for m in KPI_METRICS}
 FIRST_DAY = "2015-08-14"  # earliest date GA4 accepts = "all time"
 

@@ -5,143 +5,190 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BacharLorai Analytics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-array@3/dist/d3-array.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-geo@3/dist/d3-geo.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 <style>
+/* BacharLorai brand: forest green #2B542F, sunflower #F8E077, warm cream */
 :root {
   color-scheme: light;
-  --page: #f9f9f7;
-  --surface: #fcfcfb;
-  --ink: #0b0b0b;
-  --ink-2: #52514e;
-  --muted: #898781;
-  --grid: #e1e0d9;
-  --axis: #c3c2b7;
-  --border: rgba(11,11,11,0.10);
-  --series: #2a78d6;
-  --series-soft: rgba(42,120,214,0.10);
-  --bar-track: #eeede8;
-  --map-land: #e4e3dc;
-  --good: #006300;
-  --bad: #b3261e;
+  --page: #faf7ec;
+  --surface: #fffefa;
+  --ink: #1d2a1f;
+  --ink-2: #4a5a4c;
+  --muted: #7d8a7e;
+  --heading: #2b542f;
+  --grid: #ece7d6;
+  --axis: #d6cfb6;
+  --border: rgba(43,84,47,0.12);
+  --shadow: 0 1px 2px rgba(43,84,47,.05), 0 8px 24px -16px rgba(43,84,47,.25);
+  --brand: #2b542f;
+  --accent: #f8e077;
+  --accent-soft: rgba(248,224,119,.42);
+  --series: #2b542f;
+  --series-soft: rgba(43,84,47,0.09);
+  --bar-track: #f0ebd9;
+  --map-land: #e8e1c8;
+  --good: #2f7a3a;
+  --bad: #b4532a;
+  --band: #2b542f;
+  --band-ink: #fdfbf2;
+  --band-ink-2: rgba(253,251,242,.72);
+  --band-chip: rgba(253,251,242,.10);
+  --band-line: rgba(253,251,242,.18);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7;
-    --muted: #898781; --grid: #2c2c2a; --axis: #383835;
-    --border: rgba(255,255,255,0.10); --series: #3987e5;
-    --series-soft: rgba(57,135,229,0.16); --bar-track: #262624; --map-land: #2f2f2c;
-    --good: #0ca30c; --bad: #f2786d;
+    --page: #0e1510; --surface: #152019; --ink: #eef0e6; --ink-2: #b9c2b4; --muted: #808c81;
+    --heading: #eef0e6; --grid: #223027; --axis: #2f3d33; --border: rgba(248,224,119,0.10);
+    --shadow: 0 1px 2px rgba(0,0,0,.3);
+    --accent-soft: rgba(248,224,119,.16); --series: #8cc191; --series-soft: rgba(140,193,145,0.14);
+    --bar-track: #213027; --map-land: #233229; --good: #8cc191; --bad: #e8946f;
+    --band: #1b3420; --band-chip: rgba(253,251,242,.08); --band-line: rgba(253,251,242,.14);
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7;
-  --muted: #898781; --grid: #2c2c2a; --axis: #383835;
-  --border: rgba(255,255,255,0.10); --series: #3987e5;
-  --series-soft: rgba(57,135,229,0.16); --bar-track: #262624; --map-land: #2f2f2c;
-  --good: #0ca30c; --bad: #f2786d;
+  --page: #0e1510; --surface: #152019; --ink: #eef0e6; --ink-2: #b9c2b4; --muted: #808c81;
+  --heading: #eef0e6; --grid: #223027; --axis: #2f3d33; --border: rgba(248,224,119,0.10);
+  --shadow: 0 1px 2px rgba(0,0,0,.3);
+  --accent-soft: rgba(248,224,119,.16); --series: #8cc191; --series-soft: rgba(140,193,145,0.14);
+  --bar-track: #213027; --map-land: #233229; --good: #8cc191; --bad: #e8946f;
+  --band: #1b3420; --band-chip: rgba(253,251,242,.08); --band-line: rgba(253,251,242,.14);
 }
 * { box-sizing: border-box; }
 body {
   margin: 0; background: var(--page); color: var(--ink);
   font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
-  font-size: 14px; line-height: 1.45;
+  font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased;
 }
-.wrap { max-width: 1180px; margin: 0 auto; padding: 28px 16px 48px; }
-header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 22px; }
-.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
-h1 { font-size: 26px; font-weight: 700; margin: 0; letter-spacing: -.01em; }
-.meta { color: var(--ink-2); font-size: 13px; text-align: right; }
-.meta strong { color: var(--ink); font-weight: 600; }
-.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.display { font-family: Poppins, Inter, system-ui, sans-serif; }
+
+/* green masthead */
+.band { background: var(--band); color: var(--band-ink); position: relative; overflow: hidden; }
+.band::after { content: ""; position: absolute; right: -120px; top: -160px; width: 420px; height: 420px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(248,224,119,.20), rgba(248,224,119,0) 68%); pointer-events: none; }
+.band-in { max-width: 1180px; margin: 0 auto; padding: 26px 16px 76px; position: relative; z-index: 1; }
+header { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; justify-content: space-between; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand img { width: 46px; height: 46px; object-fit: contain; border-radius: 50%; }
+.mark { width: 46px; height: 46px; border-radius: 50%; background: var(--accent); color: #2b542f; display: grid; place-items: center;
+  font: 700 13px/1 Poppins, sans-serif; letter-spacing: .02em; flex: none; }
+.eyebrow { font-size: 11.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin: 0 0 2px; }
+h1 { font-family: Poppins, Inter, sans-serif; font-size: 26px; font-weight: 600; margin: 0; letter-spacing: -.01em; color: var(--band-ink); }
+.meta { color: var(--band-ink-2); font-size: 13px; text-align: right; }
+.meta strong { color: var(--band-ink); font-weight: 600; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--band-line); }
 .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-.seg.range button { padding: 6px 12px; font-size: 13px; }
-.tab { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--ink-2); font-size: 13px; font-weight: 500; }
-.tab.on { background: var(--ink); color: var(--page); border-color: var(--ink); }
-.tab.soon { opacity: .55; }
-.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
-.kpi .label { color: var(--ink-2); font-size: 13px; font-weight: 500; }
-.kpi .value { font-size: 28px; font-weight: 700; letter-spacing: -.02em; margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
-.kpi .delta { font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tab { padding: 7px 14px; border-radius: 999px; background: var(--band-chip); color: var(--band-ink-2); font-size: 13px; font-weight: 500; }
+.tab.on { background: var(--accent); color: #2b542f; font-weight: 600; }
+.tab.soon { opacity: .7; }
+.tab.soon::after { content: "soon"; margin-left: 6px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
+.seg.range { background: var(--band-chip); border-color: var(--band-line); border-radius: 999px; padding: 3px; gap: 2px; }
+.seg.range button { padding: 6px 13px; font-size: 13px; color: var(--band-ink-2); border-radius: 999px; }
+.seg.range button + button { border-left: 0; }
+.seg.range button:hover { color: var(--band-ink); }
+.seg.range button.on { background: var(--accent); color: #2b542f; font-weight: 600; }
+
+.wrap { max-width: 1180px; margin: -52px auto 0; padding: 0 16px 48px; position: relative; z-index: 2; }
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; box-shadow: var(--shadow); }
+.kpi { position: relative; overflow: hidden; }
+.kpi::before { content: ""; position: absolute; left: 0; top: 0; right: 0; height: 3px; background: var(--accent); }
+.kpi .label { color: var(--ink-2); font-size: 12.5px; font-weight: 500; letter-spacing: .01em; }
+.kpi .value { font-family: Poppins, Inter, sans-serif; font-size: 27px; font-weight: 600; letter-spacing: -.015em; margin: 6px 0 4px; font-variant-numeric: tabular-nums; color: var(--heading); }
+.kpi .delta { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .delta.up { color: var(--good); } .delta.down { color: var(--bad); } .delta.flat { color: var(--muted); }
 .delta span { color: var(--muted); font-weight: 400; }
 .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin-top: 16px; }
-.card h2 { font-size: 15px; font-weight: 600; margin: 0; }
-.card .sub { color: var(--muted); font-size: 12.5px; margin: 2px 0 14px; }
+.card h2 { font-family: Poppins, Inter, sans-serif; font-size: 15.5px; font-weight: 600; margin: 0; color: var(--heading); letter-spacing: -.005em; }
+.card .sub { color: var(--muted); font-size: 12.5px; margin: 3px 0 16px; }
 .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
-.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-.seg button { font: inherit; font-size: 12.5px; border: 0; background: transparent; color: var(--ink-2); padding: 5px 10px; cursor: pointer; }
-.seg button + button { border-left: 1px solid var(--border); }
-.seg button.on { background: var(--series-soft); color: var(--ink); font-weight: 600; }
-.chart-box { position: relative; height: 280px; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; padding: 2px; }
+.seg button { font: inherit; font-size: 12.5px; border: 0; background: transparent; color: var(--ink-2); padding: 5px 12px; cursor: pointer; border-radius: 999px; }
+.seg button.on { background: var(--accent-soft); color: var(--heading); font-weight: 600; }
+.chart-box { position: relative; height: 290px; }
 .map-box { position: relative; }
 .map-box svg { display: block; width: 100%; height: auto; }
-.map-box .land { fill: var(--map-land); stroke: var(--surface); stroke-width: .5; }
-.map-box .bubble { fill: var(--series); fill-opacity: .55; stroke: var(--surface); stroke-width: 1.5; cursor: default; transition: fill-opacity .12s; }
-.map-box .bubble:hover, .map-box .bubble.hot { fill-opacity: .9; }
-.map-box .lbl { font-size: 12px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
-.map-box .lbl tspan { font-weight: 400; fill: var(--ink-2); }
-.map-tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; font-size: 12.5px; box-shadow: 0 4px 14px rgba(0,0,0,.12); white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); display: none; z-index: 2; }
-.map-tip b { font-weight: 600; } .map-tip span { color: var(--ink-2); }
-.map-foot { color: var(--muted); font-size: 12px; margin-top: 8px; }
-.bars { display: flex; flex-direction: column; gap: 10px; }
-.bar-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: baseline; }
+.map-box .land { fill: var(--map-land); stroke: var(--surface); stroke-width: .6; }
+.map-box .bubble { fill: var(--series); fill-opacity: .62; stroke: var(--surface); stroke-width: 1.5; cursor: default; transition: fill-opacity .12s; }
+.map-box .bubble:hover, .map-box .bubble.hot { fill-opacity: .92; stroke: var(--accent); stroke-width: 2.5; }
+.map-box .lbl { font-family: Poppins, Inter, sans-serif; font-size: 12.5px; font-weight: 600; fill: var(--heading); paint-order: stroke; stroke: var(--surface); stroke-width: 3.5px; stroke-linejoin: round; pointer-events: none; }
+.map-box .lbl tspan { font-family: Inter, sans-serif; font-weight: 400; fill: var(--ink-2); }
+.map-tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 11px; font-size: 12.5px; box-shadow: 0 8px 24px -8px rgba(43,84,47,.35); white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); display: none; z-index: 2; }
+.map-tip b { font-weight: 600; color: var(--heading); } .map-tip span { color: var(--ink-2); }
+.map-foot { color: var(--muted); font-size: 12px; margin-top: 10px; }
+.empty-map { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; max-width: 370px; box-shadow: var(--shadow); }
+.jump { margin-top: 10px; font: inherit; font-size: 12.5px; font-weight: 600; color: #2b542f; background: var(--accent); border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.jump:hover { filter: brightness(.96); }
+.bars { display: flex; flex-direction: column; gap: 11px; }
+.bar-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px 12px; align-items: baseline; }
 .bar-row .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
 .bar-row .num { font-variant-numeric: tabular-nums; color: var(--ink-2); font-size: 13px; }
-.bar-row .track { grid-column: 1 / -1; height: 8px; border-radius: 4px; background: var(--bar-track); overflow: hidden; }
+.bar-row .track { grid-column: 1 / -1; height: 7px; border-radius: 4px; background: var(--bar-track); overflow: hidden; }
 .bar-row .fill { height: 100%; border-radius: 4px; background: var(--series); }
 table { width: 100%; border-collapse: collapse; }
-th { text-align: left; font-size: 12px; font-weight: 600; color: var(--muted); padding: 0 0 8px; border-bottom: 1px solid var(--grid); }
+th { text-align: left; font-size: 11.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); padding: 0 0 8px; border-bottom: 1px solid var(--grid); }
 th.n, td.n { padding-left: 16px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-td { padding: 9px 0; border-bottom: 1px solid var(--grid); vertical-align: top; }
+td { padding: 10px 0; border-bottom: 1px solid var(--grid); vertical-align: top; }
 tr:last-child td { border-bottom: 0; }
 td .t { color: var(--ink); max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 td .p { color: var(--muted); font-size: 12px; }
 td.n { padding-left: 16px; color: var(--ink-2); }
 .empty { color: var(--muted); padding: 24px 0; text-align: center; }
-.notice { background: var(--series-soft); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; color: var(--ink-2); }
-.notice strong { color: var(--ink); }
-.kpi-note { color: var(--muted); font-size: 12.5px; margin: -6px 2px 16px; }
+.notice { background: var(--accent-soft); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; color: var(--ink-2); }
+.notice strong { color: var(--heading); }
+.kpi-note { color: var(--muted); font-size: 12.5px; margin: 0 2px 16px; }
 .kpi-note:empty { display: none; }
 .card .sub .src { display: block; margin-top: 2px; font-style: italic; }
-footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: center; }
-@media (max-width: 520px) { .map-box .lbl { display: none; } .seg.range { width: 100%; } .seg.range button { flex: 1; padding: 6px 4px; font-size: 12px; } .meta { text-align: left; } h1 { font-size: 22px; } .grid2 { grid-template-columns: 1fr; } }
+footer { margin-top: 32px; color: var(--muted); font-size: 12px; text-align: center; }
+footer .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin: 0 8px 1px; vertical-align: middle; }
+@media (max-width: 820px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) {
+  .map-box .lbl { display: none; } .seg.range { width: 100%; } .seg.range button { flex: 1; padding: 6px 2px; font-size: 12px; }
+  .meta { text-align: left; } h1 { font-size: 22px; } .grid2 { grid-template-columns: 1fr; }
+  .kpi .value { font-size: 23px; } .card { padding: 16px; } .band-in { padding-bottom: 68px; }
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div>
-      <p class="eyebrow">BacharLorai Global</p>
-      <h1>Analytics dashboard</h1>
-    </div>
-    <div class="meta">
-      <div>bacharlorai.com · <span id="range-meta">last 30 days vs previous 30</span></div>
-      <div>Updated <strong id="updated">—</strong></div>
-    </div>
-  </header>
-
-  <div class="toolbar">
-    <nav class="tabs" aria-label="Sections">
-      <span class="tab on">Website</span>
-      <span class="tab soon" title="Coming next">Instagram</span>
-      <span class="tab soon" title="Coming next">LinkedIn</span>
-    </nav>
-    <div class="seg range" id="range" role="group" aria-label="Time frame">
-      <button data-r="7d">7 days</button>
-      <button data-r="30d" class="on">30 days</button>
-      <button data-r="90d">90 days</button>
-      <button data-r="365d">12 months</button>
-      <button data-r="all">All time</button>
+<div class="band">
+  <div class="band-in">
+    <header>
+      <div class="brand">
+        <div class="mark" aria-hidden="true">BLG</div>
+        <div>
+          <p class="eyebrow">BacharLorai Global</p>
+          <h1>Analytics dashboard</h1>
+        </div>
+      </div>
+      <div class="meta">
+        <div>bacharlorai.com · <span id="range-meta">last 30 days vs previous 30</span></div>
+        <div>Updated <strong id="updated">—</strong></div>
+      </div>
+    </header>
+    <div class="toolbar">
+      <nav class="tabs" aria-label="Sections">
+        <span class="tab on">Website</span>
+        <span class="tab soon" title="Coming next">Instagram</span>
+        <span class="tab soon" title="Coming next">LinkedIn</span>
+      </nav>
+      <div class="seg range" id="range" role="group" aria-label="Time frame">
+        <button data-r="7d">7 days</button>
+        <button data-r="30d" class="on">30 days</button>
+        <button data-r="90d">90 days</button>
+        <button data-r="365d">12 months</button>
+        <button data-r="all">All time</button>
+      </div>
     </div>
   </div>
+</div>
 
+<div class="wrap">
   <div id="notice"></div>
   <section class="kpis" id="kpis" aria-label="Key numbers"></section>
   <p class="kpi-note" id="kpi-note"></p>
@@ -196,7 +243,7 @@ footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: cen
     </section>
   </div>
 
-  <footer>Google Analytics 4 from Oct 28, 2026 · Squarespace Analytics history before that · refreshes every morning</footer>
+  <footer>Google Analytics 4 from Oct 28, 2026<span class="dot"></span>Squarespace Analytics history before that<span class="dot"></span>Refreshes every morning</footer>
 </div>
 
 <script>
@@ -271,15 +318,20 @@ function agg(start, end) {
 
 function renderKpis(key, blended) {
   const el = document.getElementById("kpis"), note = document.getElementById("kpi-note");
+  const pct = v => `${(v * 100).toFixed(0)}%`;
   if (!blended) {
     const k = DATA.ranges[key].kpis, c = k.current, p = k.previous || {}, noPrev = !k.previous;
     const dl = (a, b, kind) => noPrev ? delta(a, null) : delta(a, b, kind);
+    const ppv = r => r.sessions ? r.screenPageViews / r.sessions : 0;
+    const hasBounce = c.bounceRate !== undefined;
     el.innerHTML = [
       card("Visitors", fmt(c.activeUsers), dl(c.activeUsers, p.activeUsers)),
       card("New visitors", fmt(c.newUsers), dl(c.newUsers, p.newUsers)),
       card("Visits", fmt(c.sessions), dl(c.sessions, p.sessions)),
       card("Page views", fmt(c.screenPageViews), dl(c.screenPageViews, p.screenPageViews)),
-      card("Engagement rate", `${(c.engagementRate * 100).toFixed(0)}%`, dl(c.engagementRate, p.engagementRate, "pts")),
+      card("Pages per visit", ppv(c).toFixed(2), dl(ppv(c), noPrev ? 0 : ppv(p))),
+      card("Bounce rate", hasBounce ? pct(c.bounceRate) : "—", hasBounce ? dl(c.bounceRate, p.bounceRate, "pts-inv") : `<div class="delta flat"><span>after the next refresh</span></div>`),
+      card("Engagement rate", pct(c.engagementRate), dl(c.engagementRate, p.engagementRate, "pts")),
       card("Avg. visit length", duration(c.averageSessionDuration), dl(c.averageSessionDuration, p.averageSessionDuration)),
     ].join("");
     note.textContent = "";
@@ -289,19 +341,27 @@ function renderKpis(key, blended) {
   const c = agg(start, end);
   const p = days ? agg(addDays(start, -days), addDays(start, -1)) : null;
   const dl = (a, b, kind) => p ? delta(a, b, kind) : delta(a, null);
+  // Squarespace didn't record new visitors, engagement or visit length,
+  // so those three cards show Google Analytics numbers only
+  const g = DATA.ranges[key].kpis.current;
+  const gaOnly = `<div class="delta flat"><span>Google Analytics only, from ${nice(GA_START, { month: "short", day: "numeric" })}</span></div>`;
+  const hasGA = g.sessions > 0;
   el.innerHTML = [
     card("Visitors", fmt(c.visitors), dl(c.visitors, p && p.visitors)),
+    card("New visitors", hasGA ? fmt(g.newUsers) : "—", gaOnly),
     card("Visits", fmt(c.visits), dl(c.visits, p && p.visits)),
     card("Page views", fmt(c.views), dl(c.views, p && p.views)),
     card("Pages per visit", c.perVisit.toFixed(2), dl(c.perVisit, p && p.perVisit)),
-    card("Bounce rate", `${(c.bounce * 100).toFixed(0)}%`, dl(c.bounce, p && p.bounce, "pts-inv")),
+    card("Bounce rate", pct(c.bounce), dl(c.bounce, p && p.bounce, "pts-inv")),
+    card("Engagement rate", hasGA ? pct(g.engagementRate) : "—", gaOnly),
+    card("Avg. visit length", hasGA ? duration(g.averageSessionDuration) : "—", gaOnly),
   ].join("");
-  note.textContent = `Includes Squarespace history before ${nice(GA_START)}. Visitors here are counted per day and added up, so someone who visits on two different days counts twice.`;
+  note.textContent = `Visitors, Visits, Page views, Pages per visit and Bounce rate include Squarespace history before ${nice(GA_START)}. Visitors there are counted per day and added up, so someone who visits on two different days counts twice.`;
 }
 
 function renderBars(id, rows, labelKey, valueKey, asShare) {
   const el = document.getElementById(id);
-  if (!rows.length) { el.innerHTML = `<div class="empty">No data yet</div>`; return; }
+  if (!rows.length) { el.innerHTML = emptyHTML(); return; }
   const total = rows.reduce((s, r) => s + r[valueKey], 0);
   const max = Math.max(...rows.map(r => r[valueKey]));
   el.innerHTML = rows.map(r => {
@@ -318,7 +378,7 @@ function renderBars(id, rows, labelKey, valueKey, asShare) {
 
 function renderPages(rows) {
   const el = document.getElementById("pages");
-  if (!rows.length) { el.innerHTML = `<div class="empty">No data yet</div>`; return; }
+  if (!rows.length) { el.innerHTML = emptyHTML(); return; }
   const showVisitors = rows.every(r => r.activeUsers !== undefined);
   el.innerHTML = `<table><thead><tr><th>Page</th><th class="n">Views</th>${showVisitors ? '<th class="n">Visitors</th>' : ""}</tr></thead><tbody>${
     rows.map(r => `<tr><td><div class="t">${esc(r.pageTitle || r.pagePath)}</div><div class="p">${esc(r.pagePath)}</div></td>
@@ -371,8 +431,11 @@ function renderTrend(metric) {
   chart = new Chart(document.getElementById("trend"), {
     type: "line",
     data: { labels: rows.map(r => nice(r.date, fmtOpts)), datasets: [{
-      data: rows.map(r => r[metric]), borderColor: css("--series"), backgroundColor: css("--series-soft"),
-      borderWidth: span > 700 ? 1.25 : 2, fill: true, tension: span > 200 ? 0 : 0.25,
+      data: rows.map(r => r[metric]), borderColor: css("--series"),
+      backgroundColor: c => { const a = c.chart.chartArea; if (!a) return css("--series-soft");
+        const g = c.chart.ctx.createLinearGradient(0, a.top, 0, a.bottom);
+        g.addColorStop(0, css("--series-soft")); g.addColorStop(1, "rgba(0,0,0,0)"); return g; },
+      borderWidth: span > 700 ? 1.25 : 2.25, fill: true, tension: span > 200 ? 0 : 0.25,
       pointRadius: span <= 14 ? 3 : 0, pointBackgroundColor: css("--series"), pointHoverRadius: 5, pointHoverBorderWidth: 2,
       pointHoverBackgroundColor: css("--series"), pointHoverBorderColor: css("--surface"),
     }]},
@@ -448,7 +511,7 @@ function renderMap(rows, key, noun) {
   }).join("");
   box.innerHTML = placed.length
     ? `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="World map of ${noun} by country">${land}${bubbles}${labels}</svg><div class="map-tip"></div>`
-    : `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="World map">${land}</svg><div class="empty" style="position:absolute;inset:0;display:grid;place-items:center">No data yet</div>`;
+    : `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="World map">${land}</svg><div style="position:absolute;inset:0;display:grid;place-items:center">${emptyHTML(true)}</div>`;
   const tip = box.querySelector(".map-tip"), svg = box.querySelector("svg");
   if (tip) box.querySelectorAll(".bubble").forEach(c => {
     const p = placed[+c.dataset.i];
@@ -471,6 +534,15 @@ function renderMap(rows, key, noun) {
   foot.textContent = bits.join(" ");
 }
 
+// what an empty card says: plain "No data yet", or, for periods reaching back before
+// Google Analytics, why it's empty and a shortcut to the all-time history
+let EMPTY_REASON = "";
+function emptyHTML(onMap) {
+  if (!EMPTY_REASON) return `<div class="empty">No data yet</div>`;
+  return `<div class="empty${onMap ? " empty-map" : ""}">${EMPTY_REASON}<br>
+    <button class="jump" onclick="applyRange('all')">See all-time history</button></div>`;
+}
+
 function applyRange(key) {
   if (!DATA || !DATA.ranges[key]) return;
   currentRange = key;
@@ -480,6 +552,7 @@ function applyRange(key) {
   const { start } = bounds(key);
   const blended = !!HIST && start < GA_START;
   const sinceGA = `Google Analytics only, from ${nice(GA_START)}`;
+  EMPTY_REASON = blended && HIST && key !== "all" ? `No Google Analytics data for this period yet. The Squarespace history only has all-time totals for this breakdown.` : "";
   document.getElementById("range-meta").textContent = key === "all" ? "all time" : `${t.label} vs previous ${t.short}`;
 
   renderKpis(key, blended);
