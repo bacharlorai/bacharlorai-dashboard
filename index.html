@@ -736,6 +736,8 @@ const SOCIAL_CFG = {
     ],
   },
 };
+// note under a trend chart when its numbers are reconstructed
+const TREND_NOTE = { li: { followers: "Worked back from today's total using new followers per day; LinkedIn's export doesn't include unfollows." } };
 
 // ---------- page skeletons ----------
 const sampleBanner = name => `<div class="notice sample-note"><strong>Sample numbers.</strong>
@@ -787,7 +789,10 @@ function buildSocialLayout(p) {
         ${cardHTML("Seniority", "li-sub-seniority", "li-seniority")}
         ${cardHTML("Industry", "li-sub-industry", "li-industry")}
         ${cardHTML("Company size", "li-sub-size", "li-size")}
-      </div>`;
+        ${cardHTML("Top locations", "li-sub-loc", "li-loc")}
+        ${cardHTML("Visitors by job function", "li-sub-vjob", "li-vjob")}
+      </div>
+      <section class="card" style="margin-top:16px" id="li-comp-card" hidden><h2>Compared with similar pages</h2><p class="sub" id="li-sub-comp"></p><div id="li-comp"></div></section>`;
   }
   el.querySelectorAll(`#${p}-metric button`).forEach(b => b.addEventListener("click", () => {
     el.querySelectorAll(`#${p}-metric button`).forEach(x => x.classList.toggle("on", x === b));
@@ -832,7 +837,8 @@ function renderSocialTrend(p, metric) {
   const m = cfg.trend.find(t => t.key === metric) || cfg.trend[0];
   const rows = rangeRows(data, currentRange), span = rows.length;
   document.getElementById(`${p}-trend-title`).textContent = m.title;
-  document.getElementById(`${p}-trend-sub`).textContent = cap(RANGE_TEXT[currentRange].label);
+  const tn = SOCIAL[p].source === "export" && TREND_NOTE[p] && TREND_NOTE[p][m.key];
+  document.getElementById(`${p}-trend-sub`).textContent = cap(RANGE_TEXT[currentRange].label) + (tn ? " · " + tn : "");
   if (socialCharts[p]) socialCharts[p].destroy();
   const fmtOpts = span > 400 ? { month: "short", year: "numeric" } : { month: "short", day: "numeric" };
   socialCharts[p] = new Chart(document.getElementById(`${p}-trend`), {
@@ -921,7 +927,8 @@ function renderLinkedIn(key) {
   const er = x => x.impressions ? (x.clicks + x.reactions + x.comments + x.reposts) / x.impressions : 0;
   const waiting = what => `<div class="delta flat"><span>needs the ${what} export</span></div>`;
   document.getElementById("li-kpis").innerHTML = [
-    has.followers ? card("Followers", fmt(c.followers), followerDelta(pv ? c.newFollowers : null)) : card("Followers", "—", waiting("Followers")),
+    has.followers && c.followers !== undefined ? card("Followers", fmt(c.followers), `<div class="delta up">+${fmt(c.newFollowers)} <span>new in this period</span></div>`)
+      : card("Followers", "—", has.followers ? `<div class="delta flat"><span>add the total to page-settings.json</span></div>` : waiting("Followers")),
     has.followers ? card("New followers", fmt(c.newFollowers), dl(c.newFollowers, P.newFollowers)) : card("New followers", "—", waiting("Followers")),
     has.visitors ? card("Page views", fmt(c.pageViews), dl(c.pageViews, P.pageViews)) : card("Page views", "—", waiting("Visitors")),
     has.visitors ? card("Unique visitors", fmt(c.uniqueVisitors), dl(c.uniqueVisitors, P.uniqueVisitors)) : card("Unique visitors", "—", waiting("Visitors")),
@@ -931,10 +938,11 @@ function renderLinkedIn(key) {
     card("Posts published", fmt(c.posts), dl(c.posts, P.posts)),
   ].join("");
   sub("li-kpi-note", "Engagement rate = (clicks + reactions + comments + reposts) ÷ impressions, LinkedIn's own definition." +
+    (has.visitors ? " Unique visitors are counted per day and added up." : "") +
     (key !== "all" && !pv && d.source === "export" ? ` No comparison yet: the export covers ${nice(d.dataFrom)} onward, so there's no earlier ${t.short} to compare with.` : ""));
 
   // only offer trend metrics that exist in the data
-  const avail = { pageViews: has.visitors, followers: has.followers };
+  const avail = { pageViews: has.visitors, followers: has.followersTotal !== undefined ? has.followersTotal : has.followers };
   document.querySelectorAll("#li-metric button").forEach(b => { b.hidden = avail[b.dataset.m] === false; });
   let on = document.querySelector("#li-metric button.on");
   if (!on || on.hidden) { document.querySelectorAll("#li-metric button").forEach(b => b.classList.toggle("on", b.dataset.m === "impressions")); on = document.querySelector("#li-metric button.on"); }
@@ -964,9 +972,24 @@ function renderLinkedIn(key) {
     renderBars("li-seniority", A.seniority || [], "label", "followers");
     renderBars("li-industry", (A.industry || []).slice(0, 8), "label", "followers");
     renderBars("li-size", A.companySize || [], "label", "followers");
+    if (A.locations) renderBars("li-loc", A.locations.slice(0, 8), "label", "followers"); else needs("li-loc", "Followers");
+    const V = d.visitorAudience || {};
+    if (V.jobFunction) renderBars("li-vjob", V.jobFunction.slice(0, 8), "label", "views"); else needs("li-vjob", "Visitors");
+    if (d.source === "export" && A.locations) document.getElementById("li-map-foot").textContent += " LinkedIn reports metro areas; these are grouped by country.";
   } else {
     needs("li-map", "Followers"); document.getElementById("li-map-foot").textContent = "";
-    ["li-job", "li-seniority", "li-industry", "li-size"].forEach(id => needs(id, "Followers"));
+    ["li-job", "li-seniority", "li-industry", "li-size", "li-loc"].forEach(id => needs(id, "Followers"));
+    needs("li-vjob", "Visitors");
+  }
+  sub("li-sub-loc", "Current followers by metro area");
+  sub("li-sub-vjob", "Page views by visitors' job function, whole export period");
+  const C = d.competitors, cc = document.getElementById("li-comp-card");
+  cc.hidden = !(C && C.pages && C.pages.length);
+  if (!cc.hidden) {
+    const cols = Object.keys(C.pages[0]).filter(k => k !== "Page" && k !== "Comments per day");
+    renderTable("li-comp", [{ label: "Page", get: x => `<div class="t">${esc(x.Page)}</div>` },
+      ...cols.map(k => ({ label: k, num: 1, get: x => fmt(x[k]) }))], C.pages);
+    sub("li-sub-comp", `From LinkedIn's competitor report, ${nice(C.from)} – ${nice(C.to)} · a fixed period, not affected by the time picker`);
   }
   sub("li-sub-map", "Current followers by country");
   ["job", "seniority", "industry", "size"].forEach(k => sub(`li-sub-${k}`, "Current followers"));
