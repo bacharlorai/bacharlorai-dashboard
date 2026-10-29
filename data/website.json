@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-29T00:47+00:00",
+ "updated": "2026-10-29T01:06+00:00",
  "propertyId": "561298290",
  "daily": [],
  "ranges": {
@@ -11,7 +11,8 @@
      "sessions": 0.0,
      "screenPageViews": 0.0,
      "engagementRate": 0.0,
-     "averageSessionDuration": 0.0
+     "averageSessionDuration": 0.0,
+     "bounceRate": 0.0
     },
     "previous": {
      "activeUsers": 0.0,
@@ -19,7 +20,8 @@
      "sessions": 0.0,
      "screenPageViews": 0.0,
      "engagementRate": 0.0,
-     "averageSessionDuration": 0.0
+     "averageSessionDuration": 0.0,
+     "bounceRate": 0.0
     }
    },
    "topPages": [],
@@ -36,7 +38,8 @@
      "sessions": 0.0,
      "screenPageViews": 0.0,
      "engagementRate": 0.0,
-     "averageSessionDuration": 0.0
+     "averageSessionDuration": 0.0,
+     "bounceRate": 0.0
     },
     "previous": {
      "activeUsers": 0.0,
@@ -44,7 +47,8 @@
      "sessions": 0.0,
      "screenPageViews": 0.0,
      "engagementRate": 0.0,
-     "averageSessionDuration": 0.0
+     "averageSessionDuration": 0.0,
+     "bounceRate": 0.0
     }
    },
    "topPages": [],
@@ -61,7 +65,8 @@
      "sessions": 0.0,
      "screenPageViews": 0.0,
      "engagementRate": 0.0,
-     "averageSessionDuration": 0.0
+     "averageSessionDuration": 0.0,
+     "bounceRate": 0.0
     },
     "previous": {
      "activeUsers": 0.0,
@@ -69,7 +74,8 @@
      "sessions": 0.0,
      "screenPageViews": 0.0,
      "engagementRate": 0.0,
-     "averageSessionDuration": 0.0
+     "averageSessionDuration": 0.0,
+     "bounceRate": 0.0
     }
    },
    "topPages": [],
@@ -86,7 +92,8 @@
      "sessions": 0.0,
      "screenPageViews": 0.0,
      "engagementRate": 0.0,
-     "averageSessionDuration": 0.0
+     "averageSessionDuration": 0.0,
+     "bounceRate": 0.0
     },
     "previous": {
      "activeUsers": 0.0,
@@ -94,7 +101,8 @@
      "sessions": 0.0,
      "screenPageViews": 0.0,
      "engagementRate": 0.0,
-     "averageSessionDuration": 0.0
+     "averageSessionDuration": 0.0,
+     "bounceRate": 0.0
     }
    },
    "topPages": [],
@@ -111,7 +119,8 @@
      "sessions": 0.0,
      "screenPageViews": 0.0,
      "engagementRate": 0.0,
-     "averageSessionDuration": 0.0
+     "averageSessionDuration": 0.0,
+     "bounceRate": 0.0
     },
     "previous": null
    },
