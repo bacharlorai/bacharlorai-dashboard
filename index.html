@@ -39,6 +39,7 @@
   --band-ink-2: rgba(253,251,242,.72);
   --band-chip: rgba(253,251,242,.10);
   --band-line: rgba(253,251,242,.18);
+  --note-bg: #fbf3cf;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -48,7 +49,7 @@
     --shadow: 0 1px 2px rgba(0,0,0,.3);
     --accent-soft: rgba(248,224,119,.16); --series: #8cc191; --series-soft: rgba(140,193,145,0.14);
     --bar-track: #213027; --map-land: #233229; --good: #8cc191; --bad: #e8946f;
-    --band: #1b3420; --band-chip: rgba(253,251,242,.08); --band-line: rgba(253,251,242,.14);
+    --band: #1b3420; --band-chip: rgba(253,251,242,.08); --band-line: rgba(253,251,242,.14); --note-bg: #26281a;
   }
 }
 :root[data-theme="dark"] {
@@ -58,7 +59,7 @@
   --shadow: 0 1px 2px rgba(0,0,0,.3);
   --accent-soft: rgba(248,224,119,.16); --series: #8cc191; --series-soft: rgba(140,193,145,0.14);
   --bar-track: #213027; --map-land: #233229; --good: #8cc191; --bad: #e8946f;
-  --band: #1b3420; --band-chip: rgba(253,251,242,.08); --band-line: rgba(253,251,242,.14);
+  --band: #1b3420; --band-chip: rgba(253,251,242,.08); --band-line: rgba(253,251,242,.14); --note-bg: #26281a;
 }
 * { box-sizing: border-box; }
 body {
@@ -86,8 +87,19 @@ h1 { font-family: Poppins, Inter, sans-serif; font-size: 26px; font-weight: 600;
 .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
 .tab { padding: 7px 14px; border-radius: 999px; background: var(--band-chip); color: var(--band-ink-2); font-size: 13px; font-weight: 500; }
 .tab.on { background: var(--accent); color: #2b542f; font-weight: 600; }
-.tab.soon { opacity: .7; }
-.tab.soon::after { content: "soon"; margin-left: 6px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
+.tab { font: inherit; font-size: 13px; border: 0; cursor: pointer; transition: background .15s, color .15s; }
+.tab:hover:not(.on) { color: var(--band-ink); background: rgba(253,251,242,.16); }
+.tab .badge { margin-left: 6px; font-size: 9.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; padding: 2px 6px; border-radius: 999px; background: rgba(253,251,242,.16); vertical-align: 1px; }
+.tab.on .badge { background: rgba(43,84,47,.14); }
+.sample-note { background: var(--note-bg); border: 1px dashed rgba(43,84,47,.35); color: var(--ink-2); box-shadow: var(--shadow); }
+.notice.info-note, .notice.sample-note { background: var(--note-bg); }
+.info-note { background: var(--note-bg); border: 1px solid var(--border); color: var(--ink-2); box-shadow: var(--shadow); }
+.info-note code, .empty code { font-size: 12px; background: var(--bar-track); padding: 1px 5px; border-radius: 4px; }
+.grid2.grid-2col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 720px) { .grid2.grid-2col { grid-template-columns: 1fr; } }
+.seg button { white-space: nowrap; }
+.table-scroll { overflow-x: auto; margin: 0 -2px; }
+.table-scroll table { min-width: 520px; }
 .seg.range { background: var(--band-chip); border-color: var(--band-line); border-radius: 999px; padding: 3px; gap: 2px; }
 .seg.range button { padding: 6px 13px; font-size: 13px; color: var(--band-ink-2); border-radius: 999px; }
 .seg.range button + button { border-left: 0; }
@@ -114,11 +126,19 @@ h1 { font-family: Poppins, Inter, sans-serif; font-size: 26px; font-weight: 600;
 .chart-box { position: relative; height: 290px; }
 .map-box { position: relative; }
 .map-box svg { display: block; width: 100%; height: auto; }
-.map-box .land { fill: var(--map-land); stroke: var(--surface); stroke-width: .6; }
-.map-box .bubble { fill: var(--series); fill-opacity: .62; stroke: var(--surface); stroke-width: 1.5; cursor: default; transition: fill-opacity .12s; }
-.map-box .bubble:hover, .map-box .bubble.hot { fill-opacity: .92; stroke: var(--accent); stroke-width: 2.5; }
-.map-box .lbl { font-family: Poppins, Inter, sans-serif; font-size: 12.5px; font-weight: 600; fill: var(--heading); paint-order: stroke; stroke: var(--surface); stroke-width: 3.5px; stroke-linejoin: round; pointer-events: none; }
-.map-box .lbl tspan { font-family: Inter, sans-serif; font-weight: 400; fill: var(--ink-2); }
+.map-box svg { border-radius: 12px; }
+.map-box .sea-a { stop-color: #33633b; } .map-box .sea-b { stop-color: #1d3b23; }
+.map-box .grat { fill: none; stroke: rgba(253,251,242,.07); stroke-width: .6; }
+.map-box .sphere { fill: none; stroke: rgba(253,251,242,.16); stroke-width: 1; }
+.map-box .land { fill: rgba(253,251,242,.12); stroke: rgba(253,251,242,.22); stroke-width: .45; }
+.map-box .land.hit { fill: #f8e077; }
+.map-box .halo { fill: #f8e077; opacity: .22; pointer-events: none; }
+.map-box .bubble { fill: #f8e077; fill-opacity: .92; stroke: #1d3b23; stroke-width: 1.5; cursor: pointer; transition: fill .12s, stroke .12s; }
+.map-box .bubble:hover, .map-box .bubble.hot { fill: #fff4c2; stroke: #fdfbf2; stroke-width: 2.5; }
+.map-box .lbl { font-family: Poppins, Inter, sans-serif; font-size: 13px; font-weight: 600; fill: #fdfbf2; paint-order: stroke; stroke: #1d3b23; stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
+.map-box .lbl tspan { font-family: Inter, sans-serif; font-weight: 500; fill: #f8e077; }
+.map-box .legend text { font-family: Inter, sans-serif; font-size: 11px; fill: rgba(253,251,242,.72); }
+.map-box .legend circle { fill: none; stroke: rgba(248,224,119,.8); stroke-width: 1.2; }
 .map-tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 11px; font-size: 12.5px; box-shadow: 0 8px 24px -8px rgba(43,84,47,.35); white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); display: none; z-index: 2; }
 .map-tip b { font-weight: 600; color: var(--heading); } .map-tip span { color: var(--ink-2); }
 .map-foot { color: var(--muted); font-size: 12px; margin-top: 10px; }
@@ -149,7 +169,7 @@ footer { margin-top: 32px; color: var(--muted); font-size: 12px; text-align: cen
 footer .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin: 0 8px 1px; vertical-align: middle; }
 @media (max-width: 820px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 520px) {
-  .map-box .lbl { display: none; } .seg.range { width: 100%; } .seg.range button { flex: 1; padding: 6px 2px; font-size: 12px; }
+  .map-box .lbl, .map-box .legend { display: none; } .seg.range { width: 100%; } .seg.range button { flex: 1; padding: 6px 2px; font-size: 12px; }
   .meta { text-align: left; } h1 { font-size: 22px; } .grid2 { grid-template-columns: 1fr; }
   .kpi .value { font-size: 23px; } .card { padding: 16px; } .band-in { padding-bottom: 68px; }
 }
@@ -167,15 +187,15 @@ footer .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%
         </div>
       </div>
       <div class="meta">
-        <div>bacharlorai.com · <span id="range-meta">last 30 days vs previous 30</span></div>
+        <div><span id="meta-src">bacharlorai.com</span> · <span id="range-meta">last 30 days vs previous 30</span></div>
         <div>Updated <strong id="updated">—</strong></div>
       </div>
     </header>
     <div class="toolbar">
       <nav class="tabs" aria-label="Sections">
-        <span class="tab on">Website</span>
-        <span class="tab soon" title="Coming next">Instagram</span>
-        <span class="tab soon" title="Coming next">LinkedIn</span>
+        <button class="tab on" data-tab="web" role="tab" aria-selected="true">Website</button>
+        <button class="tab" data-tab="ig" role="tab" aria-selected="false">Instagram <span class="badge" hidden>sample</span></button>
+        <button class="tab" data-tab="li" role="tab" aria-selected="false">LinkedIn <span class="badge" hidden>sample</span></button>
       </nav>
       <div class="seg range" id="range" role="group" aria-label="Time frame">
         <button data-r="7d">7 days</button>
@@ -189,6 +209,7 @@ footer .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%
 </div>
 
 <div class="wrap">
+ <div id="tab-web">
   <div id="notice"></div>
   <section class="kpis" id="kpis" aria-label="Key numbers"></section>
   <p class="kpi-note" id="kpi-note"></p>
@@ -243,7 +264,10 @@ footer .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%
     </section>
   </div>
 
-  <footer>Google Analytics 4 from Oct 28, 2026<span class="dot"></span>Squarespace Analytics history before that<span class="dot"></span>Refreshes every morning</footer>
+  </div>
+ <div id="tab-ig" hidden></div>
+ <div id="tab-li" hidden></div>
+  <footer id="footer"></footer>
 </div>
 
 <script>
@@ -476,20 +500,23 @@ function setSub(id, text, note) {
 
 const CENTROIDS = {"Zimbabwe":[29.9,-19],"Zambia":[27.8,-13.5],"Yemen":[47.5,15.9],"Vietnam":[106.3,16.5],"Venezuela":[-66.2,7.1],"Vatican":[12.4,41.9],"Vanuatu":[166.8,-15.2],"Uzbekistan":[63.3,41.8],"Uruguay":[-56,-32.8],"Micronesia":[158.2,6.9],"Marshall Is.":[171.2,7.1],"N. Mariana Is.":[145.7,15.2],"U.S. Virgin Is.":[-64.8,17.7],"Guam":[144.8,13.4],"American Samoa":[-170.7,-14.3],"Puerto Rico":[-66.5,18.2],"United States of America":[-98.8,39.9],"S. Geo. and the Is.":[-36.7,-54.4],"Br. Indian Ocean Ter.":[72.4,-7.3],"Saint Helena":[-5.7,-16],"Pitcairn Is.":[-128.3,-24.4],"Anguilla":[-63.1,18.2],"Falkland Is.":[-58.8,-51.7],"Cayman Is.":[-81.3,19.3],"Bermuda":[-64.8,32.3],"British Virgin Is.":[-64.6,18.4],"Turks and Caicos Is.":[-71.7,21.8],"Montserrat":[-62.2,16.7],"Jersey":[-2.1,49.2],"Guernsey":[-2.6,49.5],"Isle of Man":[-4.5,54.2],"United Kingdom":[-2.4,53.8],"United Arab Emirates":[54.3,23.9],"Ukraine":[31.3,49.2],"Uganda":[32.4,1.3],"Turkmenistan":[59.4,39.1],"Turkey":[35.4,39.1],"Tunisia":[9.6,34.1],"Trinidad and Tobago":[-61.3,10.4],"Tonga":[-175.2,-21.2],"Togo":[1,8.5],"Timor-Leste":[125.9,-8.8],"Thailand":[101,15.1],"Tanzania":[34.8,-6.3],"Tajikistan":[71,38.5],"Taiwan":[121,23.7],"Syria":[38.5,35],"Switzerland":[8.2,46.8],"Sweden":[16.2,62.4],"eSwatini":[31.5,-26.6],"Suriname":[-55.9,4.1],"S. Sudan":[30.3,7.3],"Sudan":[29.9,16],"Sri Lanka":[80.7,7.6],"Spain":[-3.6,40.4],"South Korea":[127.9,36.5],"South Africa":[25.2,-29],"Somalia":[45.7,4.7],"Somaliland":[46.3,9.7],"Solomon Is.":[160.2,-9.6],"Slovakia":[19.5,48.7],"Slovenia":[14.8,46.1],"Singapore":[103.8,1.4],"Sierra Leone":[-11.8,8.6],"Seychelles":[55.5,-4.7],"Serbia":[20.8,44.2],"Senegal":[-14.5,14.4],"Saudi Arabia":[44.7,24.1],"São Tomé and Principe":[6.6,0.2],"San Marino":[12.5,43.9],"Samoa":[-172.4,-13.6],"St. Vin. and Gren.":[-61.2,13.3],"Saint Lucia":[-61,13.9],"St. Kitts and Nevis":[-62.7,17.3],"Rwanda":[29.9,-2],"Russia":[95.5,65.9],"Romania":[25,45.8],"Qatar":[51.2,25.3],"Portugal":[-8,39.7],"Poland":[19.4,52.1],"Philippines":[121.4,15.9],"Peru":[-74.4,-9.1],"Paraguay":[-58.4,-23.2],"Papua New Guinea":[144.2,-6.6],"Panama":[-80.1,8.5],"Palau":[134.6,7.5],"Pakistan":[69.2,29.9],"Oman":[56.1,20.6],"Norway":[12.2,63.8],"North Korea":[127.2,40.1],"Nigeria":[8.1,9.6],"Niger":[9.3,17.4],"Nicaragua":[-85,12.8],"New Zealand":[170.6,-43.9],"Niue":[-169.9,-19],"Cook Is.":[-159.8,-21.2],"Netherlands":[5.6,52.3],"Aruba":[-70,12.5],"Curaçao":[-69,12.2],"Nepal":[83.9,28.3],"Nauru":[166.9,-0.5],"Namibia":[17.2,-22.1],"Mozambique":[35.6,-17.2],"Morocco":[-8.7,29.8],"W. Sahara":[-12.3,24.2],"Montenegro":[19.2,42.8],"Mongolia":[103.1,47],"Moldova":[28.5,47.2],"Monaco":[7.4,43.8],"Mexico":[-102.2,23.9],"Mauritius":[57.6,-20.3],"Mauritania":[-10.4,20.2],"Malta":[14.4,35.9],"Mali":[-3.6,17.3],"Maldives":[73.5,4.2],"Malaysia":[114.7,3.6],"Malawi":[34.3,-13.2],"Madagascar":[46.7,-19.3],"Macedonia":[21.7,41.6],"Luxembourg":[6.1,49.8],"Lithuania":[23.9,55.3],"Liechtenstein":[9.5,47.1],"Libya":[18.1,27],"Liberia":[-9.3,6.5],"Lesotho":[28.2,-29.6],"Lebanon":[35.9,33.9],"Latvia":[24.9,56.9],"Laos":[103.8,18.5],"Kyrgyzstan":[74.5,41.5],"Kuwait":[47.6,29.3],"Kosovo":[20.9,42.6],"Kiribati":[-157.4,1.9],"Kenya":[37.8,0.6],"Kazakhstan":[67.2,48.4],"Jordan":[36.8,31.2],"Japan":[137.9,36.6],"Jamaica":[-77.3,18.2],"Italy":[12.3,43.5],"Israel":[35,31.5],"Palestine":[35.2,31.9],"Ireland":[-8.1,53.2],"Iraq":[43.8,33],"Iran":[54.4,32.5],"Indonesia":[114,-0.2],"India":[79.5,22.8],"Iceland":[-18.6,65],"Hungary":[19.4,47.2],"Honduras":[-86.6,14.8],"Haiti":[-72.7,18.9],"Guyana":[-59,4.8],"Guinea-Bissau":[-14.9,12.1],"Guinea":[-10.9,10.4],"Guatemala":[-90.4,15.7],"Grenada":[-61.7,12.1],"Greece":[22.6,39.5],"Ghana":[-1.2,7.9],"Germany":[10.4,51],"Georgia":[43.5,42.2],"Gambia":[-15.4,13.5],"Gabon":[11.8,-0.6],"France":[2.5,46.6],"St. Pierre and Miquelon":[-56.3,46.9],"Wallis and Futuna Is.":[-178.1,-14.3],"St-Martin":[-63.1,18.1],"St-Barthélemy":[-62.8,17.9],"Fr. Polynesia":[-149.4,-17.7],"New Caledonia":[165.5,-21.3],"Fr. S. Antarctic Lands":[69.5,-49.3],"Åland":[19.9,60.2],"Finland":[26.2,64.3],"Fiji":[178,-17.8],"Ethiopia":[39.6,8.6],"Estonia":[25.8,58.7],"Eritrea":[38.8,15.4],"Eq. Guinea":[10.5,1.6],"El Salvador":[-88.9,13.7],"Egypt":[29.9,26.5],"Ecuador":[-78.4,-1.4],"Dominican Rep.":[-70.5,18.9],"Dominica":[-61.4,15.4],"Djibouti":[42.6,11.7],"Greenland":[-41.8,73.1],"Faeroe Is.":[-6.9,62.2],"Denmark":[9.3,56.2],"Czechia":[15.3,49.7],"N. Cyprus":[33.6,35.3],"Cyprus":[33,34.9],"Cuba":[-78.9,21.6],"Croatia":[16.4,45.2],"Côte d'Ivoire":[-5.6,7.6],"Costa Rica":[-84.2,10],"Dem. Rep. Congo":[23.6,-2.9],"Congo":[15.2,-0.8],"Comoros":[43.3,-11.7],"Colombia":[-73.1,3.9],"China":[103.3,36.8],"Macao":[113.5,22.2],"Hong Kong":[114.1,22.4],"Chile":[-70.9,-34.4],"Chad":[18.6,15.3],"Central African Rep.":[20.5,6.6],"Cabo Verde":[-23.6,15.1],"Canada":[-99,58.6],"Cameroon":[12.7,5.7],"Cambodia":[104.9,12.7],"Myanmar":[96.5,21.1],"Burundi":[29.9,-3.4],"Burkina Faso":[-1.8,12.3],"Bulgaria":[25.2,42.8],"Brunei":[114.6,4.5],"Brazil":[-53.2,-10.7],"Botswana":[23.8,-22.2],"Bosnia and Herz.":[17.8,44.2],"Bolivia":[-64.7,-16.7],"Bhutan":[90.4,27.4],"Benin":[2.3,9.6],"Belize":[-88.7,17.2],"Belgium":[4.6,50.6],"Belarus":[28,53.5],"Barbados":[-59.6,13.2],"Bangladesh":[90.2,23.9],"Bahrain":[50.5,26],"Bahamas":[-78,24.7],"Azerbaijan":[47.7,40.3],"Austria":[14.1,47.6],"Australia":[134.2,-25.6],"Indian Ocean Ter.":[105.7,-10.5],"Heard I. and McDonald Is.":[73.5,-53.1],"Norfolk Island":[167.9,-29.1],"Ashmore and Cartier Is.":[123.6,-12.4],"Armenia":[44.9,40.3],"Argentina":[-64.7,-34.5],"Antigua and Barb.":[-61.8,17.1],"Angola":[17.6,-12.3],"Andorra":[1.6,42.5],"Algeria":[2.6,28.1],"Albania":[20.1,41.1],"Afghanistan":[65.9,33.8],"Siachen Glacier":[77.2,35.4],"Antarctica":[83,-84.7],"Sint Maarten":[-63.1,18.1],"United States":[-98.8,39.9],"USA":[-98.8,39.9],"Republic of Korea":[127.9,36.5],"Korea, Republic of":[127.9,36.5],"Republic of Lithuania":[23.9,55.3],"Hashemite Kingdom of Jordan":[36.8,31.2],"Bosnia and Herzegovina":[17.8,44.2],"Bosnia & Herzegovina":[17.8,44.2],"Dominican Republic":[-70.5,18.9],"Central African Republic":[20.5,6.6],"South Sudan":[30.3,7.3],"Equatorial Guinea":[10.5,1.6],"Côte d’Ivoire":[-5.6,7.6],"Ivory Coast":[-5.6,7.6],"Congo - Kinshasa":[23.6,-2.9],"Democratic Republic of the Congo":[23.6,-2.9],"Congo - Brazzaville":[15.2,-0.8],"Republic of the Congo":[15.2,-0.8],"Myanmar (Burma)":[96.5,21.1],"Türkiye":[35.4,39.1],"North Macedonia":[21.7,41.6],"Eswatini":[31.5,-26.6],"Swaziland":[31.5,-26.6],"Cape Verde":[-23.6,15.1],"Solomon Islands":[160.2,-9.6],"Marshall Islands":[171.2,7.1],"Falkland Islands":[-58.8,-51.7],"Faroe Islands":[-6.9,62.2],"Western Sahara":[-12.3,24.2],"Cayman Islands":[-81.3,19.3],"British Virgin Islands":[-64.6,18.4],"U.S. Virgin Islands":[-64.8,17.7],"Turks & Caicos Islands":[-71.7,21.8],"Northern Mariana Islands":[145.7,15.2],"St. Kitts & Nevis":[-62.7,17.3],"St. Vincent & Grenadines":[-61.2,13.3],"Russian Federation":[95.5,65.9],"Islamic Republic of Iran":[54.4,32.5],"Iran, Islamic Republic of":[54.4,32.5],"Viet Nam":[106.3,16.5],"Lao People's Democratic Republic":[103.8,18.5],"Macao SAR China":[113.5,22.2],"Hong Kong SAR China":[114.1,22.4],"Republic of Moldova":[28.5,47.2],"Syrian Arab Republic":[38.5,35],"Czech Republic":[15.3,49.7],"Palestinian Territories":[35.2,31.9],"Trinidad & Tobago":[-61.3,10.4],"São Tomé & Príncipe":[6.6,0.2],"French Polynesia":[-149.4,-17.7],"Antigua & Barbuda":[-61.8,17.1]};
 
+Object.assign(CENTROIDS, { "Slovak Republic": CENTROIDS["Slovakia"], "Myanmar [Burma]": CENTROIDS["Myanmar"], "Macedonia [FYROM]": CENTROIDS["Macedonia"], "Kosovo [Republic of]": CENTROIDS["Kosovo"] });
 // ---- world map with bubbles ----
-let WORLD = null, mapState = null;
-const MAP_W = 960, MAP_H = 470;
+let WORLD = null;
+const mapStates = {};
+const MAP_W = 960, MAP_H = 500;
 fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json").then(r => r.json()).then(t => {
   WORLD = topojson.feature(t, t.objects.countries);
   WORLD.features = WORLD.features.filter(f => f.properties.name !== "Antarctica");
-  if (mapState) renderMap(...mapState);
-}).catch(() => { document.getElementById("map").innerHTML = '<div class="empty">Map could not load</div>'; });
+  Object.values(mapStates).forEach(args => renderMap(...args));
+}).catch(() => { document.querySelectorAll(".map-box").forEach(b => b.innerHTML = '<div class="empty">Map could not load</div>'); });
 
-function renderMap(rows, key, noun) {
-  mapState = [rows, key, noun];
-  const box = document.getElementById("map"), foot = document.getElementById("map-foot");
-  if (!WORLD || typeof d3 === "undefined" || !d3.geoNaturalEarth1) return;
-  const proj = d3.geoNaturalEarth1().fitExtent([[4, 4], [MAP_W - 4, MAP_H - 4]], WORLD);
+function renderMap(rows, key, noun, boxId = "map", footId = "map-foot") {
+  mapStates[boxId] = [rows, key, noun, boxId, footId];
+  const box = document.getElementById(boxId), foot = document.getElementById(footId);
+  if (!box || box.closest("[hidden]")) return;
+  if (!WORLD || typeof d3 === "undefined" || !d3.geoNaturalEarth1 || !d3.geoGraticule10) return;
+  const proj = d3.geoNaturalEarth1().fitExtent([[18, 18], [MAP_W - 18, MAP_H - 18]], { type: "Sphere" });
   const path = d3.geoPath(proj);
   const placed = [], missing = [];
   rows.forEach(r => {
@@ -501,17 +528,35 @@ function renderMap(rows, key, noun) {
     placed.push({ name, v, x, y });
   });
   const max = Math.max(1, ...placed.map(p => p.v)), total = rows.reduce((s, r) => s + (r[key] || 0), 0);
-  const R = 34, rOf = v => Math.max(3, Math.sqrt(v / max) * R);
+  const R = 34, rOf = v => Math.max(3.5, Math.sqrt(v / max) * R);
   placed.sort((a, b) => b.v - a.v);
-  const land = WORLD.features.map(f => `<path class="land" d="${path(f)}"></path>`).join("");
+  // tint the countries that have visitors, by how many
+  if (!WORLD.byLL) { WORLD.byLL = {}; WORLD.features.forEach(f => { const ll = CENTROIDS[f.properties.name]; if (ll) WORLD.byLL[ll.join()] = f.properties.name; }); }
+  const tint = {};
+  placed.forEach(p => { const ll = CENTROIDS[p.name] || CENTROIDS[String(p.name).replace(/ & /g, " and ")]; const n = WORLD.byLL[ll.join()]; if (n) tint[n] = (tint[n] || 0) + p.v; });
+  const gid = "sea-" + boxId;
+  const land = WORLD.features.map(f => { const v = tint[f.properties.name];
+    return v ? `<path class="land hit" style="fill-opacity:${(0.10 + 0.34 * Math.sqrt(v / max)).toFixed(2)}" d="${path(f)}"></path>` : `<path class="land" d="${path(f)}"></path>`; }).join("");
+  const sea = `<defs><radialGradient id="${gid}" cx="50%" cy="42%" r="75%"><stop offset="0" class="sea-a"/><stop offset="1" class="sea-b"/></radialGradient>
+    <filter id="${gid}-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter></defs>
+    <rect width="${MAP_W}" height="${MAP_H}" fill="url(#${gid})"/>
+    <path class="grat" d="${path(d3.geoGraticule10())}"/><path class="sphere" d="${path({ type: "Sphere" })}"/>`;
+  const halos = placed.slice(0, 12).map(p => `<circle class="halo" filter="url(#${gid}-blur)" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${(rOf(p.v) * 1.35).toFixed(1)}"/>`).join("");
   const bubbles = placed.map((p, i) => `<circle class="bubble" data-i="${i}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${rOf(p.v).toFixed(1)}"></circle>`).join("");
   const labels = placed.slice(0, 3).map(p => {
-    const r = rOf(p.v), right = p.x < MAP_W - 160;
-    return `<text class="lbl" x="${(p.x + (right ? r + 5 : -r - 5)).toFixed(1)}" y="${(p.y + 4).toFixed(1)}" text-anchor="${right ? "start" : "end"}">${esc(p.name)} <tspan>${fmt(p.v)}</tspan></text>`;
+    const r = rOf(p.v), right = p.x < MAP_W - 170;
+    return `<text class="lbl" x="${(p.x + (right ? r + 6 : -r - 6)).toFixed(1)}" y="${(p.y + 4).toFixed(1)}" text-anchor="${right ? "start" : "end"}">${esc(p.name)} <tspan>${fmt(p.v)}</tspan></text>`;
   }).join("");
+  // size legend, bottom left
+  const nice1 = v => { const m = Math.pow(10, Math.floor(Math.log10(v))); return Math.max(1, Math.round(v / m) * m); };
+  const steps = [...new Set([nice1(max), nice1(max / 4), nice1(max / 20)])].filter(v => v >= 1);
+  const lx = 30, ly = MAP_H - 22;
+  const legend = placed.length ? `<g class="legend">${steps.map(v => `<circle cx="${lx + R}" cy="${(ly - rOf(v)).toFixed(1)}" r="${rOf(v).toFixed(1)}"/>`).join("")}
+    ${steps.map(v => `<text x="${lx + 2 * R + 8}" y="${(ly - 2 * rOf(v) + 4).toFixed(1)}">${fmt(v)}</text>`).join("")}
+    <text x="${lx}" y="${ly + 14}">${esc(cap(noun))}</text></g>` : "";
   box.innerHTML = placed.length
-    ? `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="World map of ${noun} by country">${land}${bubbles}${labels}</svg><div class="map-tip"></div>`
-    : `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="World map">${land}</svg><div style="position:absolute;inset:0;display:grid;place-items:center">${emptyHTML(true)}</div>`;
+    ? `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="World map of ${noun} by country">${sea}${land}${halos}${bubbles}${labels}${legend}</svg><div class="map-tip"></div>`
+    : `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="World map">${sea}${land}</svg><div style="position:absolute;inset:0;display:grid;place-items:center">${emptyHTML(true)}</div>`;
   const tip = box.querySelector(".map-tip"), svg = box.querySelector("svg");
   if (tip) box.querySelectorAll(".bubble").forEach(c => {
     const p = placed[+c.dataset.i];
@@ -544,50 +589,106 @@ function emptyHTML(onMap) {
 }
 
 function applyRange(key) {
-  if (!DATA || !DATA.ranges[key]) return;
+  if (!RANGE_TEXT[key]) return;
   currentRange = key;
   try { localStorage.setItem("bl-range", key); } catch (e) {}
   document.querySelectorAll("#range button").forEach(x => x.classList.toggle("on", x.dataset.r === key));
+  const t = RANGE_TEXT[key];
+  document.getElementById("range-meta").textContent = key === "all" ? "all time" : `${t.label} vs previous ${t.short}`;
+  if (ACTIVE_TAB === "web") renderWebRange(key); else renderSocial(ACTIVE_TAB, key);
+}
+
+// ---- Squarespace day-by-day breakdowns (countries, pages, channels, sources, devices) ----
+const SQ_CHANNEL = { Social: "Organic Social", Search: "Organic Search", Direct: "Direct", Referral: "Referral", Email: "Email" };
+const SOURCE_NAME = { direct: "Direct (typed or bookmarked)", google: "Google", bing: "Bing", linkedin: "LinkedIn", instagram: "Instagram",
+  facebook: "Facebook", others: "Others", youtube: "YouTube", twitter: "X (Twitter)", "t.co": "X (Twitter)", duckduckgo: "DuckDuckGo", yahoo: "Yahoo", chatgpt: "ChatGPT", tor_exit_node: "Tor network", gmail: "Gmail", perplexity: "Perplexity" };
+const srcKey = s => { s = String(s || "").toLowerCase().trim();
+  if (s === "(direct)" || s === "direct") return "direct";
+  s = s.replace(/^(www|l|lm|m|com)\./, "").replace(/\.(com|org|net|co)(\.[a-z]{2})?$/, "");
+  return s.replace(/^lnkd\.in$/, "linkedin"); };
+
+// add up Squarespace's daily breakdowns between two dates (inclusive)
+function sqSum(start, end) {
+  const B = HIST && HIST.dailyBreakdowns; if (!B) return null;
+  const out = { c: {}, p: {}, ch: {}, dv: {}, s: {} };
+  for (const [date, rec] of Object.entries(B)) {
+    if (date < start || date > end) continue;
+    for (const k of Object.keys(out)) for (const [n, v] of Object.entries(rec[k] || {})) out[k][n] = (out[k][n] || 0) + v;
+  }
+  return out;
+}
+const sqCovers = start => !!(HIST && HIST.dailyBreakdowns && HIST.breakdownsFrom && (start >= HIST.breakdownsFrom || HIST.breakdownsFrom <= HIST.firstDate));
+
+function webBreakdowns(key, r, start) {
+  // Google Analytics part (from GA_START onward) plus Squarespace days before it
+  const H = HIST, sqEnd = addDays(GA_START, -1);
+  // daily detail normally covers the whole history; fall back to the lifetime export only if it doesn't
+  const fullDaily = H.breakdownsFrom && H.breakdownsFrom <= H.firstDate;
+  const lifetime = key === "all" && !fullDaily;
+  const S = key === "all" ? sqSum(H.breakdownsFrom || "0000", sqEnd) : sqSum(start, sqEnd);
+  const pagesSQ = lifetime ? H.allTime.topPages
+    : Object.entries(S.p).map(([path, v]) => ({ pagePath: path, pageTitle: (H.titles || {})[path], screenPageViews: v }));
+  const chSQ = lifetime ? H.allTime.channels : Object.entries(S.ch).map(([n, v]) => ({ sessionDefaultChannelGroup: SQ_CHANNEL[n] || n, sessions: v }));
+  const coDaily = Object.entries(S.c).map(([n, v]) => ({ country: n === "Unknown" ? "(not set)" : n, sessions: v }));
+  // the lifetime export lists only the top 100 countries, so add any smaller ones seen in the daily history
+  const coSQ = lifetime ? [...H.allTime.countries, ...coDaily.filter(c => !H.allTime.countries.some(x => x.country === c.country))] : coDaily;
+  const srcSQ = Object.entries(S.s).map(([n, v]) => ({ key: srcKey(n), sessions: v }));
+  const dvSQ = Object.entries(S.dv).map(([n, v]) => ({ key: n.toLowerCase(), sessions: v }));
+  return {
+    pages: combine(pagesSQ, r.topPages.map(p => ({ pagePath: p.pagePath, pageTitle: p.pageTitle, screenPageViews: p.screenPageViews })),
+      "pagePath", "screenPageViews", (cur, row) => { if (row.pageTitle && !cur.pageTitle) cur.pageTitle = row.pageTitle; }).slice(0, 10),
+    channels: combine(chSQ, r.channels, "sessionDefaultChannelGroup", "sessions"),
+    countries: combine(coSQ, r.countries.map(c => ({ country: c.country, sessions: c.sessions ?? c.activeUsers })), "country", "sessions"),
+    sources: combine(srcSQ, r.sources.map(x => ({ key: srcKey(x.sessionSource), sessions: x.sessions })), "key", "sessions")
+      .map(x => ({ sessionSource: SOURCE_NAME[x.key] || x.key, sessions: x.sessions })).slice(0, 10),
+    devices: combine(dvSQ, r.devices.map(x => ({ key: x.deviceCategory, sessions: x.sessions ?? x.activeUsers })), "key", "sessions")
+      .map(x => ({ deviceCategory: x.key, sessions: x.sessions })),
+  };
+}
+
+function renderWebRange(key) {
+  if (!DATA || !DATA.ranges[key]) return;
   const t = RANGE_TEXT[key], r = DATA.ranges[key];
   const { start } = bounds(key);
   const blended = !!HIST && start < GA_START;
   const sinceGA = `Google Analytics only, from ${nice(GA_START)}`;
-  EMPTY_REASON = blended && HIST && key !== "all" ? `No Google Analytics data for this period yet. The Squarespace history only has all-time totals for this breakdown.` : "";
-  document.getElementById("range-meta").textContent = key === "all" ? "all time" : `${t.label} vs previous ${t.short}`;
+  const canBlend = blended && (key === "all" || sqCovers(start));
+  EMPTY_REASON = blended && !canBlend ? `No Google Analytics data for this period yet, and the Squarespace history doesn't break this down for these dates.` : "";
 
   renderKpis(key, blended);
   renderTrend(document.querySelector("#metric button.on").dataset.m);
 
-  if (key === "all" && HIST) {
-    // all-time breakdowns: Squarespace lifetime totals + Google Analytics since the switch
-    const H = HIST.allTime;
-    const pages = combine(H.topPages, r.topPages.map(p => ({ pagePath: p.pagePath, pageTitle: p.pageTitle, screenPageViews: p.screenPageViews })),
-      "pagePath", "screenPageViews", (cur, row) => { if (row.pageTitle && !cur.pageTitle) cur.pageTitle = row.pageTitle; }).slice(0, 10);
-    renderPages(pages);
-    renderBars("channels", combine(H.channels, r.channels, "sessionDefaultChannelGroup", "sessions"), "sessionDefaultChannelGroup", "sessions");
-    const gaCountries = r.countries.map(c => ({ country: c.country, sessions: c.sessions ?? c.activeUsers }));
-    const allCountries = combine(H.countries, gaCountries, "country", "sessions");
-    renderBars("countries", allCountries.slice(0, 10), "country", "sessions");
-    renderMap(allCountries, "sessions", "visits");
-    setSub("sub-map", "Visits by country, all time", "Squarespace + Google Analytics combined");
-    setSub("sub-pages", "By page views, all time", "Squarespace + Google Analytics combined");
-    setSub("sub-channels", "Visits by channel, all time", "Squarespace + Google Analytics combined");
-    setSub("sub-countries", "Visits by country, all time", "Squarespace + Google Analytics combined");
+  if (canBlend) {
+    const W = webBreakdowns(key, r, start), both = "Squarespace + Google Analytics combined";
+    renderPages(W.pages);
+    renderBars("channels", W.channels, "sessionDefaultChannelGroup", "sessions");
+    renderBars("countries", W.countries.slice(0, 10), "country", "sessions");
+    renderMap(W.countries, "sessions", "visits");
+    renderBars("sources", W.sources, "sessionSource", "sessions");
+    renderBars("devices", W.devices, "deviceCategory", "sessions", true);
+    const partial = key === "all" && HIST.breakdownsFrom > HIST.firstDate;
+    const detail12 = partial ? `${both} · Squarespace detail starts ${nice(HIST.breakdownsFrom)}` : both;
+    setSub("sub-map", `Visits by country, ${t.label}`, both);
+    setSub("sub-pages", `By page views, ${t.label}`, both);
+    setSub("sub-channels", `Visits by channel, ${t.label}`, both);
+    setSub("sub-countries", `Visits by country, ${t.label}`, both);
+    setSub("sub-sources", `Visits by source, ${t.label}`, detail12);
+    setSub("sub-devices", `Share of visits, ${t.label}`, detail12);
   } else {
     renderPages(r.topPages);
     renderBars("channels", r.channels, "sessionDefaultChannelGroup", "sessions");
     renderBars("countries", r.countries.slice(0, 10), "country", "activeUsers");
     renderMap(r.countries, "activeUsers", "visitors");
+    renderBars("sources", r.sources, "sessionSource", "sessions");
+    renderBars("devices", r.devices, "deviceCategory", "activeUsers", true);
     const note = blended ? sinceGA : "";
     setSub("sub-map", `Visitors by country, ${t.label}`, note);
     setSub("sub-pages", `By page views, ${t.label}`, note);
     setSub("sub-channels", `Visits by channel, ${t.label}`, note);
     setSub("sub-countries", `Visitors by country, ${t.label}`, note);
+    setSub("sub-sources", `Visits by source, ${t.label}`, note);
+    setSub("sub-devices", `Share of visitors, ${t.label}`, note);
   }
-  renderBars("sources", r.sources, "sessionSource", "sessions");
-  renderBars("devices", r.devices, "deviceCategory", "activeUsers", true);
-  setSub("sub-sources", `Visits by source, ${t.label}`, blended ? sinceGA : "");
-  setSub("sub-devices", `Share of visitors, ${t.label}`, blended ? sinceGA : "");
 }
 
 document.querySelectorAll("#metric button").forEach(b => b.addEventListener("click", () => {
@@ -595,6 +696,416 @@ document.querySelectorAll("#metric button").forEach(b => b.addEventListener("cli
   renderTrend(b.dataset.m);
 }));
 document.querySelectorAll("#range button").forEach(b => b.addEventListener("click", () => applyRange(b.dataset.r)));
+
+// =====================================================================
+// Instagram and LinkedIn tabs
+// Each reads data/instagram.json or data/linkedin.json (written by the
+// daily robot once the account is connected). Until then the tab shows
+// the finished layout filled with clearly labelled sample numbers.
+//
+// File shape (both platforms):
+// { updated, account: {name, handle, followers},
+//   daily: [{date, ...daily metrics}],
+//   ranges: {"7d"|"30d"|"90d"|"365d"|"all": {kpis: {current, previous|null}, ...breakdowns, topPosts}},
+//   audience: {countries: [{country, followers}], ...other lists of {label, followers}} }
+// =====================================================================
+
+const SOCIAL = { ig: null, li: null };          // loaded or sample data
+const SOCIAL_SAMPLE = { ig: false, li: false }; // true while showing sample numbers
+const socialCharts = {};
+
+const SOCIAL_CFG = {
+  ig: {
+    name: "Instagram", file: "data/instagram.json", source: "@bacharlorai on Instagram",
+    footer: "Instagram API with Instagram Login<span class=\"dot\"></span>Refreshes every morning",
+    trend: [
+      { key: "reach", label: "Reach", title: "Daily reach", noun: "accounts reached" },
+      { key: "views", label: "Views", title: "Daily views", noun: "views" },
+      { key: "interactions", label: "Interactions", title: "Daily interactions", noun: "interactions" },
+      { key: "followers", label: "Followers", title: "Followers over time", noun: "followers", total: true },
+    ],
+  },
+  li: {
+    name: "LinkedIn", file: "data/linkedin.json", source: "BacharLorai Global on LinkedIn",
+    footer: "LinkedIn Community Management API<span class=\"dot\"></span>Refreshes every morning",
+    trend: [
+      { key: "impressions", label: "Impressions", title: "Daily post impressions", noun: "impressions" },
+      { key: "pageViews", label: "Page views", title: "Daily page views", noun: "page views" },
+      { key: "clicks", label: "Clicks", title: "Daily post clicks", noun: "clicks" },
+      { key: "followers", label: "Followers", title: "Followers over time", noun: "followers", total: true },
+    ],
+  },
+};
+
+// ---------- page skeletons ----------
+const sampleBanner = name => `<div class="notice sample-note"><strong>Sample numbers.</strong>
+  ${name} isn't connected yet, so this tab shows the finished layout with made-up figures.
+  Real numbers replace them automatically once the account is connected.</div>`;
+
+const cardHTML = (title, subId, bodyId, extra = "") =>
+  `<section class="card"${extra}><h2>${title}</h2><p class="sub" id="${subId}"></p><div id="${bodyId}"></div></section>`;
+
+function buildSocialLayout(p) {
+  const el = document.getElementById(`tab-${p}`);
+  const cfg = SOCIAL_CFG[p];
+  const seg = cfg.trend.map((t, i) => `<button data-m="${t.key}"${i ? "" : ' class="on"'}>${t.label}</button>`).join("");
+  const top = `
+    <div id="${p}-banner"></div>
+    <section class="kpis" id="${p}-kpis" aria-label="${cfg.name} key numbers"></section>
+    <p class="kpi-note" id="${p}-kpi-note"></p>
+    <section class="card">
+      <div class="card-head">
+        <div><h2 id="${p}-trend-title"></h2><p class="sub" id="${p}-trend-sub"></p></div>
+        <div class="seg" id="${p}-metric" role="group" aria-label="Trend metric">${seg}</div>
+      </div>
+      <div class="chart-box"><canvas id="${p}-trend" role="img" aria-label="${cfg.name} daily trend"></canvas></div>
+    </section>`;
+  const posts = `<section class="card" style="margin-top:16px"><h2>Top posts</h2><p class="sub" id="${p}-sub-posts"></p><div id="${p}-posts"></div></section>`;
+  const map = `<section class="card" style="margin-top:16px"><h2>Where followers are</h2><p class="sub" id="${p}-sub-map"></p>
+      <div class="map-box" id="${p}-map"><div class="empty">Loading map…</div></div><div class="map-foot" id="${p}-map-foot"></div></section>`;
+  if (p === "ig") {
+    el.innerHTML = top + `
+      <div class="grid2">
+        ${cardHTML("Interactions by type", "ig-sub-inter", "ig-inter")}
+        ${cardHTML("Follows and unfollows", "ig-sub-follow", "ig-follow")}
+        ${cardHTML("Performance by format", "ig-sub-format", "ig-format")}
+      </div>` + posts + map + `
+      <div class="grid2">
+        ${cardHTML("Top cities", "ig-sub-cities", "ig-cities")}
+        ${cardHTML("Age", "ig-sub-age", "ig-age")}
+        ${cardHTML("Gender", "ig-sub-gender", "ig-gender")}
+      </div>`;
+  } else {
+    el.innerHTML = top + `
+      <div class="grid2">
+        ${cardHTML("Engagement by type", "li-sub-eng", "li-eng")}
+        ${cardHTML("Page views by section", "li-sub-sections", "li-sections")}
+        ${cardHTML("Page views by device", "li-sub-devices", "li-devices")}
+      </div>` + posts + map + `
+      <div class="grid2 grid-2col">
+        ${cardHTML("Job function", "li-sub-job", "li-job")}
+        ${cardHTML("Seniority", "li-sub-seniority", "li-seniority")}
+        ${cardHTML("Industry", "li-sub-industry", "li-industry")}
+        ${cardHTML("Company size", "li-sub-size", "li-size")}
+      </div>`;
+  }
+  el.querySelectorAll(`#${p}-metric button`).forEach(b => b.addEventListener("click", () => {
+    el.querySelectorAll(`#${p}-metric button`).forEach(x => x.classList.toggle("on", x === b));
+    renderSocialTrend(p, b.dataset.m);
+  }));
+  el.dataset.built = "1";
+}
+
+// ---------- shared pieces ----------
+const pctTxt = (v, d = 1) => `${(v * 100).toFixed(d)}%`;
+function followerDelta(net) {
+  if (net === null || net === undefined) return `<div class="delta flat"><span>since tracking began</span></div>`;
+  const cls = net > 0 ? "up" : net < 0 ? "down" : "flat";
+  return `<div class="delta ${cls}">${net > 0 ? "+" : net < 0 ? "−" : ""}${fmt(Math.abs(net))} <span>in this period</span></div>`;
+}
+const sub = (id, text) => { const e = document.getElementById(id); if (e) e.innerHTML = text; };
+
+function renderTable(id, cols, rows) {
+  const el = document.getElementById(id);
+  if (!rows.length) { el.innerHTML = `<div class="empty">No posts in this period</div>`; return; }
+  el.innerHTML = `<div class="table-scroll"><table><thead><tr>${cols.map(c => `<th${c.num ? ' class="n"' : ""}>${c.label}</th>`).join("")}</tr></thead><tbody>${
+    rows.map(r => `<tr>${cols.map(c => c.num ? `<td class="n">${c.get(r)}</td>` : `<td>${c.get(r)}</td>`).join("")}</tr>`).join("")
+  }</tbody></table></div>`;
+}
+
+function rangeRows(data, key) {
+  const { start, end } = socialBounds(data, key);
+  return data.daily.filter(r => r.date >= start && r.date <= end);
+}
+function socialLastDay(data) {
+  const when = new Date(data.updated);
+  const today = isNaN(when) ? new Date().toLocaleDateString("en-CA") : when.toLocaleDateString("en-CA", { timeZone: "America/Toronto" });
+  return addDays(today, -1);
+}
+function socialBounds(data, key) {
+  const days = RANGE_TEXT[key].days, end = socialLastDay(data);
+  return { start: days ? addDays(end, -(days - 1)) : (data.daily[0] ? data.daily[0].date : end), end };
+}
+
+function renderSocialTrend(p, metric) {
+  const data = SOCIAL[p], cfg = SOCIAL_CFG[p];
+  const m = cfg.trend.find(t => t.key === metric) || cfg.trend[0];
+  const rows = rangeRows(data, currentRange), span = rows.length;
+  document.getElementById(`${p}-trend-title`).textContent = m.title;
+  document.getElementById(`${p}-trend-sub`).textContent = cap(RANGE_TEXT[currentRange].label);
+  if (socialCharts[p]) socialCharts[p].destroy();
+  const fmtOpts = span > 400 ? { month: "short", year: "numeric" } : { month: "short", day: "numeric" };
+  socialCharts[p] = new Chart(document.getElementById(`${p}-trend`), {
+    type: "line",
+    data: { labels: rows.map(r => nice(r.date, fmtOpts)), datasets: [{
+      data: rows.map(r => r[m.key] || 0), borderColor: css("--series"),
+      backgroundColor: c => { const a = c.chart.chartArea; if (!a) return css("--series-soft");
+        const g = c.chart.ctx.createLinearGradient(0, a.top, 0, a.bottom);
+        g.addColorStop(0, css("--series-soft")); g.addColorStop(1, "rgba(0,0,0,0)"); return g; },
+      borderWidth: 2.25, fill: !m.total, tension: span > 200 ? 0 : 0.25,
+      pointRadius: span <= 14 ? 3 : 0, pointBackgroundColor: css("--series"), pointHoverRadius: 5, pointHoverBorderWidth: 2,
+      pointHoverBackgroundColor: css("--series"), pointHoverBorderColor: css("--surface"),
+    }]},
+    options: {
+      responsive: true, maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+      plugins: { legend: { display: false }, tooltip: {
+        backgroundColor: css("--surface"), titleColor: css("--ink-2"), bodyColor: css("--ink"),
+        borderColor: css("--border"), borderWidth: 1, padding: 10, displayColors: false,
+        callbacks: {
+          title: it => nice(rows[it[0].dataIndex].date, { weekday: "short", month: "short", day: "numeric", year: "numeric" }),
+          label: c => `${fmt(c.parsed.y)} ${m.noun}`,
+        } } },
+      scales: {
+        x: { grid: { display: false }, border: { color: css("--axis") }, ticks: { color: css("--muted"), maxTicksLimit: 7, maxRotation: 0, autoSkipPadding: 12, font: { size: 11.5 } } },
+        y: { beginAtZero: !m.total, grace: m.total ? "10%" : 0, grid: { color: css("--grid") }, border: { display: false },
+             ticks: { color: css("--muted"), precision: 0, maxTicksLimit: 5, font: { size: 11.5 } } },
+      },
+    },
+  });
+}
+
+// ---------- Instagram ----------
+function renderInstagram(key) {
+  const d = SOCIAL.ig, r = d.ranges[key], t = RANGE_TEXT[key];
+  const c = r.kpis.current, pv = r.kpis.previous, P = pv || {};
+  const dl = (a, b, kind) => pv ? delta(a, b, kind) : delta(a, null);
+  const er = x => x.reach ? x.interactions / x.reach : 0;
+  document.getElementById("ig-kpis").innerHTML = [
+    card("Followers", fmt(c.followers), followerDelta(pv ? c.followersNet : null)),
+    card("Reach", fmt(c.reach), dl(c.reach, P.reach)),
+    card("Views", fmt(c.views), dl(c.views, P.views)),
+    card("Accounts engaged", fmt(c.accountsEngaged), dl(c.accountsEngaged, P.accountsEngaged)),
+    card("Interactions", fmt(c.interactions), dl(c.interactions, P.interactions)),
+    card("Engagement rate", pctTxt(er(c)), dl(er(c), pv ? er(P) : 0, "pts")),
+    card("Profile link taps", fmt(c.profileLinkTaps), dl(c.profileLinkTaps, P.profileLinkTaps)),
+    card("Posts published", fmt(c.posts), dl(c.posts, P.posts)),
+  ].join("");
+  sub("ig-kpi-note", "Engagement rate = interactions ÷ accounts reached. Reach and accounts engaged count each account once per period.");
+  renderSocialTrend("ig", document.querySelector("#ig-metric button.on").dataset.m);
+
+  renderBars("ig-inter", r.interactionTypes, "type", "value");
+  sub("ig-sub-inter", `Likes, comments, shares, saves and reposts, ${t.label}`);
+  renderBars("ig-follow", r.followFlow, "type", "value");
+  sub("ig-sub-follow", `Accounts that followed or unfollowed, ${t.label}`);
+  renderBars("ig-format", r.formats.map(f => ({ ...f, label: `${f.format} · ${f.posts} post${f.posts === 1 ? "" : "s"}` })), "label", "avgReach");
+  sub("ig-sub-format", `Average reach per post, ${t.label}`);
+
+  renderTable("ig-posts", [
+    { label: "Post", get: x => `<div class="t">${esc(x.caption)}</div><div class="p">${esc(x.type)} · ${nice(x.date, { month: "short", day: "numeric", year: "numeric" })}</div>` },
+    { label: "Reach", num: 1, get: x => fmt(x.reach) },
+    { label: "Interactions", num: 1, get: x => fmt(x.interactions) },
+    { label: "Saves", num: 1, get: x => fmt(x.saves) },
+    { label: "Eng. rate", num: 1, get: x => pctTxt(x.reach ? x.interactions / x.reach : 0) },
+  ], r.topPosts);
+  sub("ig-sub-posts", `By reach, published ${t.label}`);
+
+  const A = d.audience;
+  renderMap(A.countries, "followers", "followers", "ig-map", "ig-map-foot");
+  sub("ig-sub-map", "Current followers by country · Instagram shows this once an account has 100+ followers");
+  renderBars("ig-cities", A.cities, "label", "followers");
+  renderBars("ig-age", A.age, "label", "followers", true);
+  renderBars("ig-gender", A.gender, "label", "followers", true);
+  ["cities", "age", "gender"].forEach(k => sub(`ig-sub-${k}`, "Current followers"));
+}
+
+// ---------- LinkedIn ----------
+// a card body that says which LinkedIn export it is waiting for
+const needs = (el, what) => { const e = document.getElementById(el); if (e) e.innerHTML =
+  `<div class="empty">Comes from the LinkedIn <b>${what}</b> export.<br><span style="font-size:12px">Add it to the <code>linkedin-exports</code> folder and it appears after the next refresh.</span></div>`; };
+
+function renderLinkedIn(key) {
+  const d = SOCIAL.li, r = d.ranges[key], t = RANGE_TEXT[key];
+  const has = d.has || { content: true, followers: true, visitors: true };
+  const c = r.kpis.current, pv = r.kpis.previous, P = pv || {};
+  const dl = (a, b, kind) => pv ? delta(a, b, kind) : delta(a, null);
+  const er = x => x.impressions ? (x.clicks + x.reactions + x.comments + x.reposts) / x.impressions : 0;
+  const waiting = what => `<div class="delta flat"><span>needs the ${what} export</span></div>`;
+  document.getElementById("li-kpis").innerHTML = [
+    has.followers ? card("Followers", fmt(c.followers), followerDelta(pv ? c.newFollowers : null)) : card("Followers", "—", waiting("Followers")),
+    has.followers ? card("New followers", fmt(c.newFollowers), dl(c.newFollowers, P.newFollowers)) : card("New followers", "—", waiting("Followers")),
+    has.visitors ? card("Page views", fmt(c.pageViews), dl(c.pageViews, P.pageViews)) : card("Page views", "—", waiting("Visitors")),
+    has.visitors ? card("Unique visitors", fmt(c.uniqueVisitors), dl(c.uniqueVisitors, P.uniqueVisitors)) : card("Unique visitors", "—", waiting("Visitors")),
+    card("Impressions", fmt(c.impressions), dl(c.impressions, P.impressions)),
+    card("Clicks", fmt(c.clicks), dl(c.clicks, P.clicks)),
+    card("Engagement rate", pctTxt(er(c)), dl(er(c), pv ? er(P) : 0, "pts")),
+    card("Posts published", fmt(c.posts), dl(c.posts, P.posts)),
+  ].join("");
+  sub("li-kpi-note", "Engagement rate = (clicks + reactions + comments + reposts) ÷ impressions, LinkedIn's own definition." +
+    (key !== "all" && !pv && d.source === "export" ? ` No comparison yet: the export covers ${nice(d.dataFrom)} onward, so there's no earlier ${t.short} to compare with.` : ""));
+
+  // only offer trend metrics that exist in the data
+  const avail = { pageViews: has.visitors, followers: has.followers };
+  document.querySelectorAll("#li-metric button").forEach(b => { b.hidden = avail[b.dataset.m] === false; });
+  let on = document.querySelector("#li-metric button.on");
+  if (!on || on.hidden) { document.querySelectorAll("#li-metric button").forEach(b => b.classList.toggle("on", b.dataset.m === "impressions")); on = document.querySelector("#li-metric button.on"); }
+  renderSocialTrend("li", on.dataset.m);
+
+  renderBars("li-eng", r.engagementTypes, "type", "value");
+  sub("li-sub-eng", `Clicks, reactions, comments and reposts on posts, ${t.label}`);
+  if (has.visitors) { renderBars("li-sections", r.sections, "section", "views"); renderBars("li-devices", r.devices, "device", "views", true); }
+  else { needs("li-sections", "Visitors"); needs("li-devices", "Visitors"); }
+  sub("li-sub-sections", `Which tabs of the page people opened, ${t.label}`);
+  sub("li-sub-devices", `Share of page views, ${t.label}`);
+
+  renderTable("li-posts", [
+    { label: "Post", get: x => `<div class="t">${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${esc(x.text)}</a>` : esc(x.text)}</div><div class="p">${nice(x.date, { month: "short", day: "numeric", year: "numeric" })}</div>` },
+    { label: "Impressions", num: 1, get: x => fmt(x.impressions) },
+    { label: "Clicks", num: 1, get: x => fmt(x.clicks) },
+    { label: "Reactions", num: 1, get: x => fmt(x.reactions) },
+    { label: "Comments", num: 1, get: x => fmt(x.comments) },
+    { label: "Eng. rate", num: 1, get: x => pctTxt(x.impressions ? (x.clicks + x.reactions + x.comments + x.reposts) / x.impressions : 0) },
+  ], r.topPosts);
+  sub("li-sub-posts", `By impressions, published ${t.label}` + (r.topPosts.some(x => x.url) ? " · click a post to open it on LinkedIn" : ""));
+
+  const A = d.audience || {};
+  if (A.countries && A.countries.length) {
+    renderMap(A.countries, "followers", "followers", "li-map", "li-map-foot");
+    renderBars("li-job", (A.jobFunction || []).slice(0, 8), "label", "followers");
+    renderBars("li-seniority", A.seniority || [], "label", "followers");
+    renderBars("li-industry", (A.industry || []).slice(0, 8), "label", "followers");
+    renderBars("li-size", A.companySize || [], "label", "followers");
+  } else {
+    needs("li-map", "Followers"); document.getElementById("li-map-foot").textContent = "";
+    ["li-job", "li-seniority", "li-industry", "li-size"].forEach(id => needs(id, "Followers"));
+  }
+  sub("li-sub-map", "Current followers by country");
+  ["job", "seniority", "industry", "size"].forEach(k => sub(`li-sub-${k}`, "Current followers"));
+}
+
+function renderSocial(p, key) {
+  if (!SOCIAL[p]) return;
+  if (!document.getElementById(`tab-${p}`).dataset.built) buildSocialLayout(p);
+  EMPTY_REASON = "";
+  const D = SOCIAL[p];
+  document.getElementById(`${p}-banner`).innerHTML = SOCIAL_SAMPLE[p] ? sampleBanner(SOCIAL_CFG[p].name)
+    : D.source === "export" ? `<div class="notice info-note"><strong>From LinkedIn's own exports</strong>, data through ${nice(D.dataThrough)}.
+        To bring it up to date, export again from the page's Analytics and add the files to the <code>linkedin-exports</code> folder.
+        Once LinkedIn approves API access, this tab updates itself every morning.</div>` : "";
+  if (p === "li") document.getElementById("footer").innerHTML = D.source === "export"
+    ? 'LinkedIn Page analytics exports<span class="dot"></span>Refreshed when new exports are added' : SOCIAL_CFG.li.footer;
+  if (p === "ig") renderInstagram(key); else renderLinkedIn(key);
+}
+
+// ---------- sample data (shown only until an account is connected) ----------
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+function makeSample(p) {
+  const R = rng(p === "ig" ? 7 : 11), today = new Date().toLocaleDateString("en-CA");
+  const end = addDays(today, -1), days = 420, daily = [];
+  let followers = p === "ig" ? 980 : 1590;
+  for (let i = days - 1; i >= 0; i--) {
+    const date = addDays(end, -i), dow = new Date(date + "T12:00:00").getDay();
+    const spike = R() < 0.06 ? 2.5 + R() * 2 : 1, wk = dow === 0 || dow === 6 ? 0.7 : 1, grow = 1 + (days - i) / days * 0.35;
+    if (p === "ig") {
+      const reach = Math.round((70 + R() * 90) * spike * wk * grow);
+      const follows = Math.round(R() * 3 * spike), unfollows = Math.round(R() * 1.3);
+      followers += follows - unfollows;
+      daily.push({ date, reach, views: Math.round(reach * (1.8 + R() * 0.8)), interactions: Math.round(reach * (0.04 + R() * 0.05)),
+        accountsEngaged: Math.round(reach * (0.03 + R() * 0.03)), profileLinkTaps: Math.round(R() * 4 * spike), follows, unfollows, followers,
+        posted: R() < 0.18 ? 1 : 0 });
+    } else {
+      const impressions = Math.round((40 + R() * 80) * spike * wk * grow);
+      const newFollowers = Math.round(R() * 1.6 * spike);
+      followers += newFollowers;
+      const pageViews = Math.round((10 + R() * 20) * (spike > 1 ? 1.6 : 1) * wk);
+      daily.push({ date, impressions, clicks: Math.round(impressions * (0.02 + R() * 0.03)), reactions: Math.round(impressions * (0.015 + R() * 0.02)),
+        comments: R() < 0.12 ? 1 : 0, reposts: R() < 0.05 ? 1 : 0, pageViews, uniqueVisitors: Math.round(pageViews * 0.6), newFollowers, followers,
+        posted: R() < 0.1 ? 1 : 0 });
+    }
+  }
+  const data = { updated: new Date().toISOString(), sample: true, daily, ranges: {}, audience: {} };
+  const sum = (rows, k) => rows.reduce((s, r) => s + (r[k] || 0), 0);
+  const titlesIG = ["Global Impact Fellowship: applications are open", "Meet the 2026–27 residency cohort", "Inclusion in Practice: policy brief launch",
+    "Behind the scenes at our community workshop", "Youth Voices: stories from the field", "Volunteer spotlight", "Research Week recap", "Thank you to our partners"];
+  const titlesLI = ["We're hiring researchers for the Inclusion in Practice project", "Announcing the 2026–27 residency cohort",
+    "New policy brief on inclusive AI governance in Bangladesh", "Global Impact Fellowship: call for applications", "Highlights from our community programs this quarter",
+    "Partnering for research on diaspora communities", "Reflections from our welfare initiatives", "Thank you to our 1,900+ followers"];
+  for (const key of Object.keys(RANGE_TEXT)) {
+    const n = RANGE_TEXT[key].days, rows = n ? daily.slice(-n) : daily, prev = n ? daily.slice(-2 * n, -n) : null;
+    const posts = Math.max(1, sum(rows, "posted"));
+    const postDates = rows.filter(r => r.posted).map(r => r.date).slice(-8).reverse();
+    if (p === "ig") {
+      const k = rs => ({ followers: rs[rs.length - 1].followers, followersNet: sum(rs, "follows") - sum(rs, "unfollows"),
+        reach: Math.round(sum(rs, "reach") * 0.62), views: sum(rs, "views"), accountsEngaged: Math.round(sum(rs, "accountsEngaged") * 0.7),
+        interactions: sum(rs, "interactions"), profileLinkTaps: sum(rs, "profileLinkTaps"), posts: Math.max(1, sum(rs, "posted")) });
+      const cur = k(rows), I = cur.interactions;
+      data.ranges[key] = {
+        kpis: { current: cur, previous: prev && prev.length === n ? k(prev) : null },
+        interactionTypes: [["Likes", .72], ["Saves", .1], ["Shares", .09], ["Comments", .06], ["Reposts", .03]].map(([type, s]) => ({ type, value: Math.round(I * s) })),
+        followFlow: [{ type: "Followed", value: sum(rows, "follows") }, { type: "Unfollowed", value: sum(rows, "unfollows") }],
+        formats: [["Reels", 1.9, .35], ["Carousels", 1.2, .4], ["Photos", .8, .25]].map(([format, m, s]) => ({ format, avgReach: Math.round(cur.reach / posts * m), posts: Math.max(0, Math.round(posts * s)) })),
+        topPosts: postDates.map((date, i) => { const reach = Math.round(cur.reach / posts * (2.4 - i * 0.22)); const inter = Math.round(reach * (0.08 - i * 0.004));
+          return { caption: titlesIG[i % titlesIG.length], type: ["Reel", "Carousel", "Photo"][i % 3], date, reach, interactions: inter, saves: Math.round(inter * 0.12) }; })
+          .sort((a, b) => b.reach - a.reach).slice(0, 6),
+      };
+    } else {
+      const k = rs => ({ followers: rs[rs.length - 1].followers, newFollowers: sum(rs, "newFollowers"), pageViews: sum(rs, "pageViews"),
+        uniqueVisitors: Math.round(sum(rs, "uniqueVisitors") * 0.8), impressions: sum(rs, "impressions"), clicks: sum(rs, "clicks"),
+        reactions: sum(rs, "reactions"), comments: sum(rs, "comments"), reposts: sum(rs, "reposts"), posts: Math.max(1, sum(rs, "posted")) });
+      const cur = k(rows), PV = cur.pageViews;
+      data.ranges[key] = {
+        kpis: { current: cur, previous: prev && prev.length === n ? k(prev) : null },
+        engagementTypes: [{ type: "Clicks", value: cur.clicks }, { type: "Reactions", value: cur.reactions }, { type: "Comments", value: cur.comments }, { type: "Reposts", value: cur.reposts }],
+        sections: [["Overview", .55], ["About", .18], ["People", .12], ["Jobs", .08], ["Life", .04], ["Posts", .03]].map(([section, s]) => ({ section, views: Math.round(PV * s) })),
+        devices: [{ device: "Desktop", views: Math.round(PV * .58) }, { device: "Mobile", views: Math.round(PV * .42) }],
+        topPosts: postDates.map((date, i) => { const imp = Math.round(cur.impressions / posts * (2.2 - i * 0.2));
+          return { text: titlesLI[i % titlesLI.length], date, impressions: imp, clicks: Math.round(imp * .045), reactions: Math.round(imp * .028), comments: i % 3 ? 0 : 2, reposts: i % 4 ? 0 : 1 }; })
+          .sort((a, b) => b.impressions - a.impressions).slice(0, 6),
+      };
+    }
+  }
+  const F = daily[daily.length - 1].followers, share = list => list.map(([label, s]) => ({ label, followers: Math.round(F * s) }));
+  const countries = list => list.map(([country, s]) => ({ country, followers: Math.round(F * s) }));
+  if (p === "ig") {
+    data.audience = {
+      countries: countries([["Bangladesh", .41], ["Canada", .29], ["United States", .09], ["United Kingdom", .05], ["India", .04], ["Australia", .02], ["Germany", .015], ["United Arab Emirates", .015], ["Malaysia", .01], ["Saudi Arabia", .01]]),
+      cities: share([["Dhaka", .31], ["Toronto", .2], ["Chittagong", .06], ["Montreal", .04], ["New York", .03], ["London", .03], ["Sylhet", .02], ["Vancouver", .02]]),
+      age: share([["13–17", .02], ["18–24", .31], ["25–34", .39], ["35–44", .16], ["45–54", .07], ["55–64", .03], ["65+", .02]]),
+      gender: share([["Women", .54], ["Men", .43], ["Not specified", .03]]),
+    };
+  } else {
+    data.audience = {
+      countries: countries([["Canada", .38], ["Bangladesh", .27], ["United States", .12], ["United Kingdom", .05], ["India", .04], ["Australia", .02], ["Germany", .02], ["Netherlands", .01], ["Singapore", .01], ["Nigeria", .01]]),
+      jobFunction: share([["Research", .16], ["Education", .14], ["Community & Social Services", .12], ["Business Development", .1], ["Operations", .08], ["Engineering", .07], ["Media & Communication", .06], ["Healthcare Services", .05]]),
+      seniority: share([["Entry", .32], ["Senior", .22], ["Manager", .12], ["Training", .1], ["Director", .07], ["Owner", .06], ["VP", .02], ["CXO", .02]]),
+      industry: share([["Non-profit Organizations", .19], ["Higher Education", .15], ["Research Services", .09], ["IT Services and Consulting", .08], ["Civic and Social Organizations", .07], ["Government Administration", .05], ["Financial Services", .05], ["International Affairs", .04]]),
+      companySize: share([["1", .03], ["2–10", .1], ["11–50", .14], ["51–200", .16], ["201–500", .1], ["501–1,000", .07], ["1,001–5,000", .12], ["5,001–10,000", .07], ["10,001+", .21]]),
+    };
+  }
+  return data;
+}
+
+function loadSocial(p) {
+  return fetch(SOCIAL_CFG[p].file + "?v=" + Date.now())
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(d => { SOCIAL[p] = d; SOCIAL_SAMPLE[p] = !!d.sample; })
+    .catch(() => { SOCIAL[p] = makeSample(p); SOCIAL_SAMPLE[p] = true; })
+    .then(() => { const b = document.querySelector(`.tab[data-tab="${p}"] .badge`); if (b) b.hidden = !SOCIAL_SAMPLE[p]; });
+}
+
+// ---------- tab switching ----------
+let ACTIVE_TAB = "web";
+const TAB_HASH = { web: "website", ig: "instagram", li: "linkedin" };
+function setTab(p, push = true) {
+  ACTIVE_TAB = p;
+  document.querySelectorAll(".tab[data-tab]").forEach(b => { const on = b.dataset.tab === p; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
+  ["web", "ig", "li"].forEach(k => { document.getElementById(`tab-${k}`).hidden = k !== p; });
+  document.getElementById("meta-src").textContent = p === "web" ? "bacharlorai.com" : SOCIAL_CFG[p].source;
+  document.getElementById("footer").innerHTML = p === "web" ? WEB_FOOTER : SOCIAL_CFG[p].footer;
+  if (push) { try { history.replaceState(null, "", "#" + TAB_HASH[p]); } catch (e) {} }
+  applyRange(currentRange);
+}
+document.querySelectorAll(".tab[data-tab]").forEach(b => b.addEventListener("click", () => setTab(b.dataset.tab)));
+
+const WEB_FOOTER = 'Google Analytics 4 from Oct 28, 2026<span class="dot"></span>Squarespace Analytics history before that<span class="dot"></span>Refreshes every morning';
+{
+  const fromHash = { "#instagram": "ig", "#linkedin": "li", "#website": "web" }[location.hash];
+  ACTIVE_TAB = fromHash || "web";
+  document.getElementById("footer").innerHTML = WEB_FOOTER;
+  if (ACTIVE_TAB !== "web") setTab(ACTIVE_TAB, false);
+  Promise.all([loadSocial("ig"), loadSocial("li")]).then(() => { if (ACTIVE_TAB !== "web") applyRange(currentRange); });
+}
+
 
 function render(d, hist) {
   const when = new Date(d.updated);
@@ -614,7 +1125,7 @@ function render(d, hist) {
       Google Analytics started counting on this site recently (${gaDays} day${gaDays === 1 ? "" : "s"} of data so far),
       so comparisons will fill in over the coming weeks.</div>`;
   }
-  document.querySelectorAll("#range button").forEach(b => { b.disabled = !d.ranges[b.dataset.r]; if (b.disabled) b.style.opacity = .4; });
+  if (!d.ranges["7d"]) currentRange = "30d";  // very old data file
   applyRange(d.ranges[currentRange] ? currentRange : "30d");
 }
 
@@ -632,7 +1143,8 @@ else {
 }
 
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-  const on = document.querySelector("#metric button.on"); if (merged.length) renderTrend(on.dataset.m);
+  if (ACTIVE_TAB === "web") { const on = document.querySelector("#metric button.on"); if (merged.length) renderTrend(on.dataset.m); }
+  else applyRange(currentRange);
 });
 </script>
 </body>
