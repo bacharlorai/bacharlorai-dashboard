@@ -19,13 +19,16 @@ jobs:
           python-version: "3.12"
 
       - name: Install libraries
-        run: pip install google-analytics-data
+        run: pip install google-analytics-data pandas xlrd openpyxl
 
       - name: Fetch website analytics
         env:
           GA4_CREDENTIALS: ${{ secrets.GA4_CREDENTIALS }}
           GA4_PROPERTY_ID: ${{ secrets.GA4_PROPERTY_ID }}
         run: python fetch_website.py
+
+      - name: Build LinkedIn data from exports
+        run: python fetch_linkedin_export.py
 
       - name: Save new data
         run: |
