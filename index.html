@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BacharLorai Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11,11,11,0.10);
+  --series: #2a78d6;
+  --series-soft: rgba(42,120,214,0.10);
+  --bar-track: #eeede8;
+  --good: #006300;
+  --bad: #b3261e;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7;
+    --muted: #898781; --grid: #2c2c2a; --axis: #383835;
+    --border: rgba(255,255,255,0.10); --series: #3987e5;
+    --series-soft: rgba(57,135,229,0.16); --bar-track: #262624;
+    --good: #0ca30c; --bad: #f2786d;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7;
+  --muted: #898781; --grid: #2c2c2a; --axis: #383835;
+  --border: rgba(255,255,255,0.10); --series: #3987e5;
+  --series-soft: rgba(57,135,229,0.16); --bar-track: #262624;
+  --good: #0ca30c; --bad: #f2786d;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--page); color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 14px; line-height: 1.45;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: 28px 16px 48px; }
+header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 22px; }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
+h1 { font-size: 26px; font-weight: 700; margin: 0; letter-spacing: -.01em; }
+.meta { color: var(--ink-2); font-size: 13px; text-align: right; }
+.meta strong { color: var(--ink); font-weight: 600; }
+.tabs { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+.tab { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--ink-2); font-size: 13px; font-weight: 500; }
+.tab.on { background: var(--ink); color: var(--page); border-color: var(--ink); }
+.tab.soon { opacity: .55; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+.kpi .label { color: var(--ink-2); font-size: 13px; font-weight: 500; }
+.kpi .value { font-size: 28px; font-weight: 700; letter-spacing: -.02em; margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+.kpi .delta { font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.delta.up { color: var(--good); } .delta.down { color: var(--bad); } .delta.flat { color: var(--muted); }
+.delta span { color: var(--muted); font-weight: 400; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin-top: 16px; }
+.card h2 { font-size: 15px; font-weight: 600; margin: 0; }
+.card .sub { color: var(--muted); font-size: 12.5px; margin: 2px 0 14px; }
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-size: 12.5px; border: 0; background: transparent; color: var(--ink-2); padding: 5px 10px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--border); }
+.seg button.on { background: var(--series-soft); color: var(--ink); font-weight: 600; }
+.chart-box { position: relative; height: 280px; }
+.bars { display: flex; flex-direction: column; gap: 10px; }
+.bar-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: baseline; }
+.bar-row .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+.bar-row .num { font-variant-numeric: tabular-nums; color: var(--ink-2); font-size: 13px; }
+.bar-row .track { grid-column: 1 / -1; height: 8px; border-radius: 4px; background: var(--bar-track); overflow: hidden; }
+.bar-row .fill { height: 100%; border-radius: 4px; background: var(--series); }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-size: 12px; font-weight: 600; color: var(--muted); padding: 0 0 8px; border-bottom: 1px solid var(--grid); }
+th.n, td.n { padding-left: 16px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td { padding: 9px 0; border-bottom: 1px solid var(--grid); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td .t { color: var(--ink); max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+td .p { color: var(--muted); font-size: 12px; }
+td.n { padding-left: 16px; color: var(--ink-2); }
+.empty { color: var(--muted); padding: 24px 0; text-align: center; }
+.notice { background: var(--series-soft); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; color: var(--ink-2); }
+.notice strong { color: var(--ink); }
+footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: center; }
+@media (max-width: 520px) { .meta { text-align: left; } h1 { font-size: 22px; } .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <p class="eyebrow">BacharLorai Global</p>
+      <h1>Analytics dashboard</h1>
+    </div>
+    <div class="meta">
+      <div>bacharlorai.com · last 30 days vs previous 30</div>
+      <div>Updated <strong id="updated">—</strong></div>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Sections">
+    <span class="tab on">Website</span>
+    <span class="tab soon" title="Coming next">Instagram</span>
+    <span class="tab soon" title="Coming next">LinkedIn</span>
+  </nav>
+
+  <div id="notice"></div>
+  <section class="kpis" id="kpis" aria-label="Key numbers"></section>
+
+  <section class="card">
+    <div class="card-head">
+      <div>
+        <h2 id="trend-title">Daily visitors</h2>
+        <p class="sub">Last 90 days</p>
+      </div>
+      <div class="seg" role="group" aria-label="Trend metric">
+        <button class="on" data-m="activeUsers">Visitors</button>
+        <button data-m="sessions">Visits</button>
+        <button data-m="screenPageViews">Page views</button>
+      </div>
+    </div>
+    <div class="chart-box"><canvas id="trend" aria-label="Daily trend chart" role="img"></canvas></div>
+  </section>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>Top pages</h2>
+      <p class="sub">By page views, last 30 days</p>
+      <div id="pages"></div>
+    </section>
+    <section class="card">
+      <h2>How people find the site</h2>
+      <p class="sub">Visits by channel, last 30 days</p>
+      <div class="bars" id="channels"></div>
+    </section>
+    <section class="card">
+      <h2>Where visitors are</h2>
+      <p class="sub">Visitors by country, last 30 days</p>
+      <div class="bars" id="countries"></div>
+    </section>
+    <section class="card">
+      <h2>Referring sites</h2>
+      <p class="sub">Visits by source, last 30 days</p>
+      <div class="bars" id="sources"></div>
+    </section>
+    <section class="card">
+      <h2>Devices</h2>
+      <p class="sub">Share of visitors, last 30 days</p>
+      <div class="bars" id="devices"></div>
+    </section>
+  </div>
+
+  <footer>Data from Google Analytics 4 · refreshes every morning</footer>
+</div>
+
+<script>
+const fmt = n => Math.round(n).toLocaleString("en-CA");
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function duration(sec) {
+  const m = Math.floor(sec / 60), s = Math.round(sec % 60);
+  return m ? `${m}m ${String(s).padStart(2, "0")}s` : `${s}s`;
+}
+
+function delta(cur, prev, isRate) {
+  if (!prev) return `<div class="delta flat">— <span>no earlier data</span></div>`;
+  const diff = isRate ? (cur - prev) * 100 : ((cur - prev) / prev) * 100;
+  const cls = Math.abs(diff) < 0.5 ? "flat" : diff > 0 ? "up" : "down";
+  const arrow = cls === "up" ? "▲" : cls === "down" ? "▼" : "";
+  const txt = isRate ? `${Math.abs(diff).toFixed(1)} pts` : `${Math.abs(diff).toFixed(0)}%`;
+  return `<div class="delta ${cls}">${arrow} ${txt} <span>vs prev. 30 days</span></div>`;
+}
+
+function renderKpis(k) {
+  const c = k.current, p = k.previous;
+  const items = [
+    ["Visitors", fmt(c.activeUsers), delta(c.activeUsers, p.activeUsers)],
+    ["New visitors", fmt(c.newUsers), delta(c.newUsers, p.newUsers)],
+    ["Visits", fmt(c.sessions), delta(c.sessions, p.sessions)],
+    ["Page views", fmt(c.screenPageViews), delta(c.screenPageViews, p.screenPageViews)],
+    ["Engagement rate", `${(c.engagementRate * 100).toFixed(0)}%`, delta(c.engagementRate, p.engagementRate, true)],
+    ["Avg. visit length", duration(c.averageSessionDuration), delta(c.averageSessionDuration, p.averageSessionDuration)],
+  ];
+  document.getElementById("kpis").innerHTML = items.map(([l, v, d]) =>
+    `<div class="card kpi"><div class="label">${l}</div><div class="value">${v}</div>${d}</div>`).join("");
+}
+
+function renderBars(id, rows, labelKey, valueKey, asShare) {
+  const el = document.getElementById(id);
+  if (!rows.length) { el.innerHTML = `<div class="empty">No data yet</div>`; return; }
+  const total = rows.reduce((s, r) => s + r[valueKey], 0);
+  const max = Math.max(...rows.map(r => r[valueKey]));
+  el.innerHTML = rows.map(r => {
+    const share = total ? (r[valueKey] / total) * 100 : 0;
+    const num = asShare ? `${share.toFixed(0)}%` : `${fmt(r[valueKey])} <span style="color:var(--muted)">· ${share.toFixed(0)}%</span>`;
+    const w = max ? (r[valueKey] / max) * 100 : 0;
+    const name = r[labelKey] === "(not set)" || r[labelKey] === "(direct)" ? (r[labelKey] === "(direct)" ? "Direct (typed or bookmarked)" : "Unknown") : r[labelKey];
+    return `<div class="bar-row" title="${esc(name)}: ${fmt(r[valueKey])}">
+      <div class="name">${esc(name.charAt(0).toUpperCase() + name.slice(1))}</div><div class="num">${num}</div>
+      <div class="track"><div class="fill" style="width:${w.toFixed(1)}%"></div></div></div>`;
+  }).join("");
+}
+
+function renderPages(rows) {
+  const el = document.getElementById("pages");
+  if (!rows.length) { el.innerHTML = `<div class="empty">No data yet</div>`; return; }
+  el.innerHTML = `<table><thead><tr><th>Page</th><th class="n">Views</th><th class="n">Visitors</th></tr></thead><tbody>${
+    rows.map(r => `<tr><td><div class="t">${esc(r.pageTitle || r.pagePath)}</div><div class="p">${esc(r.pagePath)}</div></td>
+      <td class="n">${fmt(r.screenPageViews)}</td><td class="n">${fmt(r.activeUsers)}</td></tr>`).join("")
+  }</tbody></table>`;
+}
+
+let chart, dailyData = [];
+const labels = { activeUsers: "Daily visitors", sessions: "Daily visits", screenPageViews: "Daily page views" };
+
+function renderTrend(metric) {
+  document.getElementById("trend-title").textContent = labels[metric];
+  const ctx = document.getElementById("trend");
+  const pts = dailyData.map(d => d[metric]);
+  const xs = dailyData.map(d => new Date(d.date + "T12:00:00").toLocaleDateString("en-CA", { month: "short", day: "numeric" }));
+  if (chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: "line",
+    data: { labels: xs, datasets: [{
+      data: pts, borderColor: css("--series"), backgroundColor: css("--series-soft"),
+      borderWidth: 2, fill: true, tension: 0.25,
+      pointRadius: 0, pointHoverRadius: 5, pointHoverBorderWidth: 2,
+      pointHoverBackgroundColor: css("--series"), pointHoverBorderColor: css("--surface"),
+    }]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: css("--surface"), titleColor: css("--ink-2"), bodyColor: css("--ink"),
+          borderColor: css("--border"), borderWidth: 1, padding: 10, displayColors: false,
+          callbacks: { label: c => `${fmt(c.parsed.y)} ${labels[metric].replace("Daily ", "")}` },
+        },
+      },
+      scales: {
+        x: { grid: { display: false }, border: { color: css("--axis") },
+             ticks: { color: css("--muted"), maxTicksLimit: 7, maxRotation: 0, font: { size: 11.5 } } },
+        y: { beginAtZero: true, grid: { color: css("--grid") }, border: { display: false },
+             ticks: { color: css("--muted"), precision: 0, maxTicksLimit: 5, font: { size: 11.5 } } },
+      },
+    },
+  });
+}
+
+document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".seg button").forEach(x => x.classList.toggle("on", x === b));
+  renderTrend(b.dataset.m);
+}));
+
+function render(d) {
+  const when = new Date(d.updated);
+  document.getElementById("updated").textContent = isNaN(when) ? "—" :
+    when.toLocaleString("en-CA", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Toronto" });
+  const days = d.daily.filter(r => r.activeUsers > 0).length;
+  if (days < 14) {
+    document.getElementById("notice").innerHTML = `<div class="notice"><strong>Still warming up.</strong>
+      Google Analytics started counting on this site recently (${days} day${days === 1 ? "" : "s"} of data so far),
+      so comparisons with the previous 30 days will fill in over the coming weeks.</div>`;
+  }
+  renderKpis(d.kpis);
+  dailyData = d.daily;
+  renderTrend("activeUsers");
+  renderPages(d.topPages);
+  renderBars("channels", d.channels, "sessionDefaultChannelGroup", "sessions");
+  renderBars("countries", d.countries, "country", "activeUsers");
+  renderBars("sources", d.sources, "sessionSource", "sessions");
+  renderBars("devices", d.devices, "deviceCategory", "activeUsers", true);
+}
+
+if (window.SAMPLE_DATA) render(window.SAMPLE_DATA);
+else fetch("data/website.json?v=" + Date.now())
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(render)
+  .catch(() => {
+    document.getElementById("notice").innerHTML = `<div class="notice"><strong>No data yet.</strong>
+      The first refresh hasn't run. In GitHub, open Actions → Refresh analytics → Run workflow.</div>`;
+  });
+
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+  const on = document.querySelector(".seg button.on"); if (dailyData.length) renderTrend(on.dataset.m);
+});
+</script>
+</body>
+</html>
