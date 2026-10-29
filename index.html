@@ -54,7 +54,9 @@ header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; 
 h1 { font-size: 26px; font-weight: 700; margin: 0; letter-spacing: -.01em; }
 .meta { color: var(--ink-2); font-size: 13px; text-align: right; }
 .meta strong { color: var(--ink); font-weight: 600; }
-.tabs { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.seg.range button { padding: 6px 12px; font-size: 13px; }
 .tab { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--ink-2); font-size: 13px; font-weight: 500; }
 .tab.on { background: var(--ink); color: var(--page); border-color: var(--ink); }
 .tab.soon { opacity: .55; }
@@ -92,7 +94,7 @@ td.n { padding-left: 16px; color: var(--ink-2); }
 .notice { background: var(--series-soft); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; color: var(--ink-2); }
 .notice strong { color: var(--ink); }
 footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: center; }
-@media (max-width: 520px) { .meta { text-align: left; } h1 { font-size: 22px; } .grid2 { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .seg.range { width: 100%; } .seg.range button { flex: 1; padding: 6px 4px; font-size: 12px; } .meta { text-align: left; } h1 { font-size: 22px; } .grid2 { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -103,16 +105,25 @@ footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: cen
       <h1>Analytics dashboard</h1>
     </div>
     <div class="meta">
-      <div>bacharlorai.com · last 30 days vs previous 30</div>
+      <div>bacharlorai.com · <span id="range-meta">last 30 days vs previous 30</span></div>
       <div>Updated <strong id="updated">—</strong></div>
     </div>
   </header>
 
-  <nav class="tabs" aria-label="Sections">
-    <span class="tab on">Website</span>
-    <span class="tab soon" title="Coming next">Instagram</span>
-    <span class="tab soon" title="Coming next">LinkedIn</span>
-  </nav>
+  <div class="toolbar">
+    <nav class="tabs" aria-label="Sections">
+      <span class="tab on">Website</span>
+      <span class="tab soon" title="Coming next">Instagram</span>
+      <span class="tab soon" title="Coming next">LinkedIn</span>
+    </nav>
+    <div class="seg range" id="range" role="group" aria-label="Time frame">
+      <button data-r="7d">7 days</button>
+      <button data-r="30d" class="on">30 days</button>
+      <button data-r="90d">90 days</button>
+      <button data-r="365d">12 months</button>
+      <button data-r="all">All time</button>
+    </div>
+  </div>
 
   <div id="notice"></div>
   <section class="kpis" id="kpis" aria-label="Key numbers"></section>
@@ -121,9 +132,9 @@ footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: cen
     <div class="card-head">
       <div>
         <h2 id="trend-title">Daily visitors</h2>
-        <p class="sub">Last 90 days</p>
+        <p class="sub" id="trend-sub">Last 30 days</p>
       </div>
-      <div class="seg" role="group" aria-label="Trend metric">
+      <div class="seg" id="metric" role="group" aria-label="Trend metric">
         <button class="on" data-m="activeUsers">Visitors</button>
         <button data-m="sessions">Visits</button>
         <button data-m="screenPageViews">Page views</button>
@@ -135,27 +146,27 @@ footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: cen
   <div class="grid2">
     <section class="card">
       <h2>Top pages</h2>
-      <p class="sub">By page views, last 30 days</p>
+      <p class="sub">By page views, <span class="rl">last 30 days</span></p>
       <div id="pages"></div>
     </section>
     <section class="card">
       <h2>How people find the site</h2>
-      <p class="sub">Visits by channel, last 30 days</p>
+      <p class="sub">Visits by channel, <span class="rl">last 30 days</span></p>
       <div class="bars" id="channels"></div>
     </section>
     <section class="card">
       <h2>Where visitors are</h2>
-      <p class="sub">Visitors by country, last 30 days</p>
+      <p class="sub">Visitors by country, <span class="rl">last 30 days</span></p>
       <div class="bars" id="countries"></div>
     </section>
     <section class="card">
       <h2>Referring sites</h2>
-      <p class="sub">Visits by source, last 30 days</p>
+      <p class="sub">Visits by source, <span class="rl">last 30 days</span></p>
       <div class="bars" id="sources"></div>
     </section>
     <section class="card">
       <h2>Devices</h2>
-      <p class="sub">Share of visitors, last 30 days</p>
+      <p class="sub">Share of visitors, <span class="rl">last 30 days</span></p>
       <div class="bars" id="devices"></div>
     </section>
   </div>
@@ -174,23 +185,26 @@ function duration(sec) {
 }
 
 function delta(cur, prev, isRate) {
+  if (prev === null || prev === undefined) return `<div class="delta flat"><span>since tracking began</span></div>`;
   if (!prev) return `<div class="delta flat">— <span>no earlier data</span></div>`;
   const diff = isRate ? (cur - prev) * 100 : ((cur - prev) / prev) * 100;
   const cls = Math.abs(diff) < 0.5 ? "flat" : diff > 0 ? "up" : "down";
   const arrow = cls === "up" ? "▲" : cls === "down" ? "▼" : "";
   const txt = isRate ? `${Math.abs(diff).toFixed(1)} pts` : `${Math.abs(diff).toFixed(0)}%`;
-  return `<div class="delta ${cls}">${arrow} ${txt} <span>vs prev. 30 days</span></div>`;
+  return `<div class="delta ${cls}">${arrow} ${txt} <span>vs previous ${RANGE_TEXT[currentRange].short}</span></div>`;
 }
 
 function renderKpis(k) {
-  const c = k.current, p = k.previous;
+  const c = k.current, p = k.previous || {};
+  const noPrev = !k.previous;
+  const dl = (a, b, r) => noPrev ? delta(a, null) : delta(a, b, r);
   const items = [
-    ["Visitors", fmt(c.activeUsers), delta(c.activeUsers, p.activeUsers)],
-    ["New visitors", fmt(c.newUsers), delta(c.newUsers, p.newUsers)],
-    ["Visits", fmt(c.sessions), delta(c.sessions, p.sessions)],
-    ["Page views", fmt(c.screenPageViews), delta(c.screenPageViews, p.screenPageViews)],
-    ["Engagement rate", `${(c.engagementRate * 100).toFixed(0)}%`, delta(c.engagementRate, p.engagementRate, true)],
-    ["Avg. visit length", duration(c.averageSessionDuration), delta(c.averageSessionDuration, p.averageSessionDuration)],
+    ["Visitors", fmt(c.activeUsers), dl(c.activeUsers, p.activeUsers)],
+    ["New visitors", fmt(c.newUsers), dl(c.newUsers, p.newUsers)],
+    ["Visits", fmt(c.sessions), dl(c.sessions, p.sessions)],
+    ["Page views", fmt(c.screenPageViews), dl(c.screenPageViews, p.screenPageViews)],
+    ["Engagement rate", `${(c.engagementRate * 100).toFixed(0)}%`, dl(c.engagementRate, p.engagementRate, true)],
+    ["Avg. visit length", duration(c.averageSessionDuration), dl(c.averageSessionDuration, p.averageSessionDuration)],
   ];
   document.getElementById("kpis").innerHTML = items.map(([l, v, d]) =>
     `<div class="card kpi"><div class="label">${l}</div><div class="value">${v}</div>${d}</div>`).join("");
@@ -227,15 +241,26 @@ const labels = { activeUsers: "Daily visitors", sessions: "Daily visits", screen
 function renderTrend(metric) {
   document.getElementById("trend-title").textContent = labels[metric];
   const ctx = document.getElementById("trend");
-  const pts = dailyData.map(d => d[metric]);
-  const xs = dailyData.map(d => new Date(d.date + "T12:00:00").toLocaleDateString("en-CA", { month: "short", day: "numeric" }));
+  const days = RANGE_TEXT[currentRange].days;
+  let rows = dailyData;
+  if (days) {
+    // count back from the newest day in the data (GA ranges end "yesterday")
+    const last = dailyData.length ? new Date(dailyData[dailyData.length - 1].date + "T12:00:00Z") : new Date();
+    last.setUTCDate(last.getUTCDate() - (days - 1));
+    const cutStr = last.toISOString().slice(0, 10);
+    rows = dailyData.filter(d => d.date >= cutStr);
+  }
+  const longSpan = rows.length > 400;
+  const pts = rows.map(d => d[metric]);
+  const xs = rows.map(d => new Date(d.date + "T12:00:00").toLocaleDateString("en-CA",
+    longSpan ? { month: "short", year: "numeric" } : { month: "short", day: "numeric" }));
   if (chart) chart.destroy();
   chart = new Chart(ctx, {
     type: "line",
     data: { labels: xs, datasets: [{
       data: pts, borderColor: css("--series"), backgroundColor: css("--series-soft"),
       borderWidth: 2, fill: true, tension: 0.25,
-      pointRadius: 0, pointHoverRadius: 5, pointHoverBorderWidth: 2,
+      pointRadius: rows.length <= 14 ? 3 : 0, pointBackgroundColor: css("--series"), pointHoverRadius: 5, pointHoverBorderWidth: 2,
       pointHoverBackgroundColor: css("--series"), pointHoverBorderColor: css("--surface"),
     }]},
     options: {
@@ -259,10 +284,41 @@ function renderTrend(metric) {
   });
 }
 
-document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => {
-  document.querySelectorAll(".seg button").forEach(x => x.classList.toggle("on", x === b));
+document.querySelectorAll("#metric button").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("#metric button").forEach(x => x.classList.toggle("on", x === b));
   renderTrend(b.dataset.m);
 }));
+
+const RANGE_TEXT = {
+  "7d":   { days: 7,    label: "last 7 days",    short: "7 days" },
+  "30d":  { days: 30,   label: "last 30 days",   short: "30 days" },
+  "90d":  { days: 90,   label: "last 90 days",   short: "90 days" },
+  "365d": { days: 365,  label: "last 12 months", short: "12 months" },
+  "all":  { days: null, label: "all time",       short: "" },
+};
+let currentRange = "30d", DATA = null;
+try { const saved = localStorage.getItem("bl-range"); if (RANGE_TEXT[saved]) currentRange = saved; } catch (e) {}
+
+function applyRange(key) {
+  if (!DATA || !DATA.ranges[key]) return;
+  currentRange = key;
+  try { localStorage.setItem("bl-range", key); } catch (e) {}
+  document.querySelectorAll("#range button").forEach(x => x.classList.toggle("on", x.dataset.r === key));
+  const t = RANGE_TEXT[key];
+  document.getElementById("range-meta").textContent = key === "all" ? "all time" : `${t.label} vs previous ${t.short}`;
+  document.querySelectorAll(".rl").forEach(s => s.textContent = t.label);
+  document.getElementById("trend-sub").textContent = t.label.charAt(0).toUpperCase() + t.label.slice(1);
+  const r = DATA.ranges[key];
+  renderKpis(r.kpis);
+  renderTrend(document.querySelector("#metric button.on").dataset.m);
+  renderPages(r.topPages);
+  renderBars("channels", r.channels, "sessionDefaultChannelGroup", "sessions");
+  renderBars("countries", r.countries, "country", "activeUsers");
+  renderBars("sources", r.sources, "sessionSource", "sessions");
+  renderBars("devices", r.devices, "deviceCategory", "activeUsers", true);
+}
+
+document.querySelectorAll("#range button").forEach(b => b.addEventListener("click", () => applyRange(b.dataset.r)));
 
 function render(d) {
   const when = new Date(d.updated);
@@ -274,14 +330,12 @@ function render(d) {
       Google Analytics started counting on this site recently (${days} day${days === 1 ? "" : "s"} of data so far),
       so comparisons with the previous 30 days will fill in over the coming weeks.</div>`;
   }
-  renderKpis(d.kpis);
+  if (!d.ranges) d.ranges = { "30d": { kpis: d.kpis, topPages: d.topPages, channels: d.channels,
+    countries: d.countries, devices: d.devices, sources: d.sources } };  // older data file
+  DATA = d;
   dailyData = d.daily;
-  renderTrend("activeUsers");
-  renderPages(d.topPages);
-  renderBars("channels", d.channels, "sessionDefaultChannelGroup", "sessions");
-  renderBars("countries", d.countries, "country", "activeUsers");
-  renderBars("sources", d.sources, "sessionSource", "sessions");
-  renderBars("devices", d.devices, "deviceCategory", "activeUsers", true);
+  document.querySelectorAll("#range button").forEach(b => { b.disabled = !d.ranges[b.dataset.r]; if (b.disabled) b.style.opacity = .4; });
+  applyRange(d.ranges[currentRange] ? currentRange : "30d");
 }
 
 if (window.SAMPLE_DATA) render(window.SAMPLE_DATA);
@@ -294,7 +348,7 @@ else fetch("data/website.json?v=" + Date.now())
   });
 
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-  const on = document.querySelector(".seg button.on"); if (dailyData.length) renderTrend(on.dataset.m);
+  const on = document.querySelector("#metric button.on"); if (dailyData.length) renderTrend(on.dataset.m);
 });
 </script>
 </body>

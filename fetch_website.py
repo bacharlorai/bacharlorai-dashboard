@@ -53,15 +53,13 @@ def run(dimensions, metrics, date_ranges, order_metric=None, limit=None):
     return rows
 
 
-LAST_30 = DateRange(start_date="30daysAgo", end_date="yesterday", name="current")
-PREV_30 = DateRange(start_date="60daysAgo", end_date="31daysAgo", name="previous")
-LAST_90 = DateRange(start_date="90daysAgo", end_date="yesterday")
-
 KPI_METRICS = ["activeUsers", "newUsers", "sessions", "screenPageViews",
                "engagementRate", "averageSessionDuration"]
-
-# 1. Headline numbers: last 30 days vs the 30 days before
 blank = {m: 0.0 for m in KPI_METRICS}
+FIRST_DAY = "2015-08-14"  # earliest date GA4 accepts = "all time"
+
+# Time frames the dashboard can switch between (days back; None = all time)
+RANGES = {"7d": 7, "30d": 30, "90d": 90, "365d": 365, "all": None}
 
 
 def totals(date_range):
@@ -69,39 +67,44 @@ def totals(date_range):
     return rows[0] if rows else dict(blank)
 
 
-kpis = {"current": totals(LAST_30), "previous": totals(PREV_30)}
+def frame(days):
+    if days:
+        cur = DateRange(start_date=f"{days}daysAgo", end_date="yesterday")
+        prev = DateRange(start_date=f"{days * 2}daysAgo", end_date=f"{days + 1}daysAgo")
+        kpis = {"current": totals(cur), "previous": totals(prev)}
+    else:
+        cur = DateRange(start_date=FIRST_DAY, end_date="yesterday")
+        kpis = {"current": totals(cur), "previous": None}
+    return {
+        "kpis": kpis,
+        "topPages": run(["pagePath", "pageTitle"], ["screenPageViews", "activeUsers"],
+                        [cur], order_metric="screenPageViews", limit=10),
+        "channels": run(["sessionDefaultChannelGroup"], ["sessions"], [cur],
+                        order_metric="sessions", limit=8),
+        "countries": run(["country"], ["activeUsers"], [cur],
+                         order_metric="activeUsers", limit=10),
+        "devices": run(["deviceCategory"], ["activeUsers"], [cur],
+                       order_metric="activeUsers"),
+        "sources": run(["sessionSource"], ["sessions"], [cur],
+                       order_metric="sessions", limit=10),
+    }
 
-# 2. Daily trend, last 90 days
-daily = run(["date"], ["activeUsers", "sessions", "screenPageViews"], [LAST_90])
+
+# Daily trend for the whole history; the page trims it to the chosen time frame
+daily = run(["date"], ["activeUsers", "sessions", "screenPageViews"],
+            [DateRange(start_date=FIRST_DAY, end_date="yesterday")])
 daily.sort(key=lambda r: r["date"])
 for r in daily:
     r["date"] = f'{r["date"][:4]}-{r["date"][4:6]}-{r["date"][6:]}'
 
-# 3. Breakdowns, last 30 days
-top_pages = run(["pagePath", "pageTitle"], ["screenPageViews", "activeUsers"],
-                [LAST_30], order_metric="screenPageViews", limit=10)
-channels = run(["sessionDefaultChannelGroup"], ["sessions"], [LAST_30],
-               order_metric="sessions", limit=8)
-countries = run(["country"], ["activeUsers"], [LAST_30],
-                order_metric="activeUsers", limit=10)
-devices = run(["deviceCategory"], ["activeUsers"], [LAST_30],
-              order_metric="activeUsers")
-referrers = run(["sessionSource"], ["sessions"], [LAST_30],
-                order_metric="sessions", limit=10)
-
 out = {
     "updated": datetime.now(timezone.utc).isoformat(timespec="minutes"),
     "propertyId": PROPERTY_ID,
-    "kpis": kpis,
     "daily": daily,
-    "topPages": top_pages,
-    "channels": channels,
-    "countries": countries,
-    "devices": devices,
-    "sources": referrers,
+    "ranges": {key: frame(days) for key, days in RANGES.items()},
 }
 
 os.makedirs("data", exist_ok=True)
 with open("data/website.json", "w") as f:
     json.dump(out, f, indent=1)
-print(f"Saved data/website.json ({len(daily)} days of trend data)")
+print(f"Saved data/website.json ({len(daily)} days of trend data, {len(RANGES)} time frames)")
