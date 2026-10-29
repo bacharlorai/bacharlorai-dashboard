@@ -82,7 +82,7 @@ def frame(days):
         "channels": run(["sessionDefaultChannelGroup"], ["sessions"], [cur],
                         order_metric="sessions", limit=8),
         "countries": run(["country"], ["activeUsers", "sessions"], [cur],
-                         order_metric="activeUsers", limit=10),
+                         order_metric="activeUsers", limit=100),
         "devices": run(["deviceCategory"], ["activeUsers"], [cur],
                        order_metric="activeUsers"),
         "sources": run(["sessionSource"], ["sessions"], [cur],

@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-array@3/dist/d3-array.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-geo@3/dist/d3-geo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 <style>
 :root {
   color-scheme: light;
@@ -21,6 +24,7 @@
   --series: #2a78d6;
   --series-soft: rgba(42,120,214,0.10);
   --bar-track: #eeede8;
+  --map-land: #e4e3dc;
   --good: #006300;
   --bad: #b3261e;
 }
@@ -30,7 +34,7 @@
     --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7;
     --muted: #898781; --grid: #2c2c2a; --axis: #383835;
     --border: rgba(255,255,255,0.10); --series: #3987e5;
-    --series-soft: rgba(57,135,229,0.16); --bar-track: #262624;
+    --series-soft: rgba(57,135,229,0.16); --bar-track: #262624; --map-land: #2f2f2c;
     --good: #0ca30c; --bad: #f2786d;
   }
 }
@@ -39,7 +43,7 @@
   --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7;
   --muted: #898781; --grid: #2c2c2a; --axis: #383835;
   --border: rgba(255,255,255,0.10); --series: #3987e5;
-  --series-soft: rgba(57,135,229,0.16); --bar-track: #262624;
+  --series-soft: rgba(57,135,229,0.16); --bar-track: #262624; --map-land: #2f2f2c;
   --good: #0ca30c; --bad: #f2786d;
 }
 * { box-sizing: border-box; }
@@ -76,6 +80,16 @@ h1 { font-size: 26px; font-weight: 700; margin: 0; letter-spacing: -.01em; }
 .seg button + button { border-left: 1px solid var(--border); }
 .seg button.on { background: var(--series-soft); color: var(--ink); font-weight: 600; }
 .chart-box { position: relative; height: 280px; }
+.map-box { position: relative; }
+.map-box svg { display: block; width: 100%; height: auto; }
+.map-box .land { fill: var(--map-land); stroke: var(--surface); stroke-width: .5; }
+.map-box .bubble { fill: var(--series); fill-opacity: .55; stroke: var(--surface); stroke-width: 1.5; cursor: default; transition: fill-opacity .12s; }
+.map-box .bubble:hover, .map-box .bubble.hot { fill-opacity: .9; }
+.map-box .lbl { font-size: 12px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.map-box .lbl tspan { font-weight: 400; fill: var(--ink-2); }
+.map-tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; font-size: 12.5px; box-shadow: 0 4px 14px rgba(0,0,0,.12); white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); display: none; z-index: 2; }
+.map-tip b { font-weight: 600; } .map-tip span { color: var(--ink-2); }
+.map-foot { color: var(--muted); font-size: 12px; margin-top: 8px; }
 .bars { display: flex; flex-direction: column; gap: 10px; }
 .bar-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: baseline; }
 .bar-row .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
@@ -97,7 +111,7 @@ td.n { padding-left: 16px; color: var(--ink-2); }
 .kpi-note:empty { display: none; }
 .card .sub .src { display: block; margin-top: 2px; font-style: italic; }
 footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: center; }
-@media (max-width: 520px) { .seg.range { width: 100%; } .seg.range button { flex: 1; padding: 6px 4px; font-size: 12px; } .meta { text-align: left; } h1 { font-size: 22px; } .grid2 { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .map-box .lbl { display: none; } .seg.range { width: 100%; } .seg.range button { flex: 1; padding: 6px 4px; font-size: 12px; } .meta { text-align: left; } h1 { font-size: 22px; } .grid2 { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -145,6 +159,13 @@ footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: cen
       </div>
     </div>
     <div class="chart-box"><canvas id="trend" aria-label="Daily trend chart" role="img"></canvas></div>
+  </section>
+
+  <section class="card" style="margin-top:16px">
+    <h2>Visitor map</h2>
+    <p class="sub" id="sub-map">Visitors by country, last 30 days</p>
+    <div class="map-box" id="map"><div class="empty">Loading map…</div></div>
+    <div class="map-foot" id="map-foot"></div>
   </section>
 
   <div class="grid2">
@@ -390,6 +411,66 @@ function setSub(id, text, note) {
   document.getElementById(id).innerHTML = esc(text) + (note ? `<span class="src">${esc(note)}</span>` : "");
 }
 
+const CENTROIDS = {"Zimbabwe":[29.9,-19],"Zambia":[27.8,-13.5],"Yemen":[47.5,15.9],"Vietnam":[106.3,16.5],"Venezuela":[-66.2,7.1],"Vatican":[12.4,41.9],"Vanuatu":[166.8,-15.2],"Uzbekistan":[63.3,41.8],"Uruguay":[-56,-32.8],"Micronesia":[158.2,6.9],"Marshall Is.":[171.2,7.1],"N. Mariana Is.":[145.7,15.2],"U.S. Virgin Is.":[-64.8,17.7],"Guam":[144.8,13.4],"American Samoa":[-170.7,-14.3],"Puerto Rico":[-66.5,18.2],"United States of America":[-98.8,39.9],"S. Geo. and the Is.":[-36.7,-54.4],"Br. Indian Ocean Ter.":[72.4,-7.3],"Saint Helena":[-5.7,-16],"Pitcairn Is.":[-128.3,-24.4],"Anguilla":[-63.1,18.2],"Falkland Is.":[-58.8,-51.7],"Cayman Is.":[-81.3,19.3],"Bermuda":[-64.8,32.3],"British Virgin Is.":[-64.6,18.4],"Turks and Caicos Is.":[-71.7,21.8],"Montserrat":[-62.2,16.7],"Jersey":[-2.1,49.2],"Guernsey":[-2.6,49.5],"Isle of Man":[-4.5,54.2],"United Kingdom":[-2.4,53.8],"United Arab Emirates":[54.3,23.9],"Ukraine":[31.3,49.2],"Uganda":[32.4,1.3],"Turkmenistan":[59.4,39.1],"Turkey":[35.4,39.1],"Tunisia":[9.6,34.1],"Trinidad and Tobago":[-61.3,10.4],"Tonga":[-175.2,-21.2],"Togo":[1,8.5],"Timor-Leste":[125.9,-8.8],"Thailand":[101,15.1],"Tanzania":[34.8,-6.3],"Tajikistan":[71,38.5],"Taiwan":[121,23.7],"Syria":[38.5,35],"Switzerland":[8.2,46.8],"Sweden":[16.2,62.4],"eSwatini":[31.5,-26.6],"Suriname":[-55.9,4.1],"S. Sudan":[30.3,7.3],"Sudan":[29.9,16],"Sri Lanka":[80.7,7.6],"Spain":[-3.6,40.4],"South Korea":[127.9,36.5],"South Africa":[25.2,-29],"Somalia":[45.7,4.7],"Somaliland":[46.3,9.7],"Solomon Is.":[160.2,-9.6],"Slovakia":[19.5,48.7],"Slovenia":[14.8,46.1],"Singapore":[103.8,1.4],"Sierra Leone":[-11.8,8.6],"Seychelles":[55.5,-4.7],"Serbia":[20.8,44.2],"Senegal":[-14.5,14.4],"Saudi Arabia":[44.7,24.1],"São Tomé and Principe":[6.6,0.2],"San Marino":[12.5,43.9],"Samoa":[-172.4,-13.6],"St. Vin. and Gren.":[-61.2,13.3],"Saint Lucia":[-61,13.9],"St. Kitts and Nevis":[-62.7,17.3],"Rwanda":[29.9,-2],"Russia":[95.5,65.9],"Romania":[25,45.8],"Qatar":[51.2,25.3],"Portugal":[-8,39.7],"Poland":[19.4,52.1],"Philippines":[121.4,15.9],"Peru":[-74.4,-9.1],"Paraguay":[-58.4,-23.2],"Papua New Guinea":[144.2,-6.6],"Panama":[-80.1,8.5],"Palau":[134.6,7.5],"Pakistan":[69.2,29.9],"Oman":[56.1,20.6],"Norway":[12.2,63.8],"North Korea":[127.2,40.1],"Nigeria":[8.1,9.6],"Niger":[9.3,17.4],"Nicaragua":[-85,12.8],"New Zealand":[170.6,-43.9],"Niue":[-169.9,-19],"Cook Is.":[-159.8,-21.2],"Netherlands":[5.6,52.3],"Aruba":[-70,12.5],"Curaçao":[-69,12.2],"Nepal":[83.9,28.3],"Nauru":[166.9,-0.5],"Namibia":[17.2,-22.1],"Mozambique":[35.6,-17.2],"Morocco":[-8.7,29.8],"W. Sahara":[-12.3,24.2],"Montenegro":[19.2,42.8],"Mongolia":[103.1,47],"Moldova":[28.5,47.2],"Monaco":[7.4,43.8],"Mexico":[-102.2,23.9],"Mauritius":[57.6,-20.3],"Mauritania":[-10.4,20.2],"Malta":[14.4,35.9],"Mali":[-3.6,17.3],"Maldives":[73.5,4.2],"Malaysia":[114.7,3.6],"Malawi":[34.3,-13.2],"Madagascar":[46.7,-19.3],"Macedonia":[21.7,41.6],"Luxembourg":[6.1,49.8],"Lithuania":[23.9,55.3],"Liechtenstein":[9.5,47.1],"Libya":[18.1,27],"Liberia":[-9.3,6.5],"Lesotho":[28.2,-29.6],"Lebanon":[35.9,33.9],"Latvia":[24.9,56.9],"Laos":[103.8,18.5],"Kyrgyzstan":[74.5,41.5],"Kuwait":[47.6,29.3],"Kosovo":[20.9,42.6],"Kiribati":[-157.4,1.9],"Kenya":[37.8,0.6],"Kazakhstan":[67.2,48.4],"Jordan":[36.8,31.2],"Japan":[137.9,36.6],"Jamaica":[-77.3,18.2],"Italy":[12.3,43.5],"Israel":[35,31.5],"Palestine":[35.2,31.9],"Ireland":[-8.1,53.2],"Iraq":[43.8,33],"Iran":[54.4,32.5],"Indonesia":[114,-0.2],"India":[79.5,22.8],"Iceland":[-18.6,65],"Hungary":[19.4,47.2],"Honduras":[-86.6,14.8],"Haiti":[-72.7,18.9],"Guyana":[-59,4.8],"Guinea-Bissau":[-14.9,12.1],"Guinea":[-10.9,10.4],"Guatemala":[-90.4,15.7],"Grenada":[-61.7,12.1],"Greece":[22.6,39.5],"Ghana":[-1.2,7.9],"Germany":[10.4,51],"Georgia":[43.5,42.2],"Gambia":[-15.4,13.5],"Gabon":[11.8,-0.6],"France":[2.5,46.6],"St. Pierre and Miquelon":[-56.3,46.9],"Wallis and Futuna Is.":[-178.1,-14.3],"St-Martin":[-63.1,18.1],"St-Barthélemy":[-62.8,17.9],"Fr. Polynesia":[-149.4,-17.7],"New Caledonia":[165.5,-21.3],"Fr. S. Antarctic Lands":[69.5,-49.3],"Åland":[19.9,60.2],"Finland":[26.2,64.3],"Fiji":[178,-17.8],"Ethiopia":[39.6,8.6],"Estonia":[25.8,58.7],"Eritrea":[38.8,15.4],"Eq. Guinea":[10.5,1.6],"El Salvador":[-88.9,13.7],"Egypt":[29.9,26.5],"Ecuador":[-78.4,-1.4],"Dominican Rep.":[-70.5,18.9],"Dominica":[-61.4,15.4],"Djibouti":[42.6,11.7],"Greenland":[-41.8,73.1],"Faeroe Is.":[-6.9,62.2],"Denmark":[9.3,56.2],"Czechia":[15.3,49.7],"N. Cyprus":[33.6,35.3],"Cyprus":[33,34.9],"Cuba":[-78.9,21.6],"Croatia":[16.4,45.2],"Côte d'Ivoire":[-5.6,7.6],"Costa Rica":[-84.2,10],"Dem. Rep. Congo":[23.6,-2.9],"Congo":[15.2,-0.8],"Comoros":[43.3,-11.7],"Colombia":[-73.1,3.9],"China":[103.3,36.8],"Macao":[113.5,22.2],"Hong Kong":[114.1,22.4],"Chile":[-70.9,-34.4],"Chad":[18.6,15.3],"Central African Rep.":[20.5,6.6],"Cabo Verde":[-23.6,15.1],"Canada":[-99,58.6],"Cameroon":[12.7,5.7],"Cambodia":[104.9,12.7],"Myanmar":[96.5,21.1],"Burundi":[29.9,-3.4],"Burkina Faso":[-1.8,12.3],"Bulgaria":[25.2,42.8],"Brunei":[114.6,4.5],"Brazil":[-53.2,-10.7],"Botswana":[23.8,-22.2],"Bosnia and Herz.":[17.8,44.2],"Bolivia":[-64.7,-16.7],"Bhutan":[90.4,27.4],"Benin":[2.3,9.6],"Belize":[-88.7,17.2],"Belgium":[4.6,50.6],"Belarus":[28,53.5],"Barbados":[-59.6,13.2],"Bangladesh":[90.2,23.9],"Bahrain":[50.5,26],"Bahamas":[-78,24.7],"Azerbaijan":[47.7,40.3],"Austria":[14.1,47.6],"Australia":[134.2,-25.6],"Indian Ocean Ter.":[105.7,-10.5],"Heard I. and McDonald Is.":[73.5,-53.1],"Norfolk Island":[167.9,-29.1],"Ashmore and Cartier Is.":[123.6,-12.4],"Armenia":[44.9,40.3],"Argentina":[-64.7,-34.5],"Antigua and Barb.":[-61.8,17.1],"Angola":[17.6,-12.3],"Andorra":[1.6,42.5],"Algeria":[2.6,28.1],"Albania":[20.1,41.1],"Afghanistan":[65.9,33.8],"Siachen Glacier":[77.2,35.4],"Antarctica":[83,-84.7],"Sint Maarten":[-63.1,18.1],"United States":[-98.8,39.9],"USA":[-98.8,39.9],"Republic of Korea":[127.9,36.5],"Korea, Republic of":[127.9,36.5],"Republic of Lithuania":[23.9,55.3],"Hashemite Kingdom of Jordan":[36.8,31.2],"Bosnia and Herzegovina":[17.8,44.2],"Bosnia & Herzegovina":[17.8,44.2],"Dominican Republic":[-70.5,18.9],"Central African Republic":[20.5,6.6],"South Sudan":[30.3,7.3],"Equatorial Guinea":[10.5,1.6],"Côte d’Ivoire":[-5.6,7.6],"Ivory Coast":[-5.6,7.6],"Congo - Kinshasa":[23.6,-2.9],"Democratic Republic of the Congo":[23.6,-2.9],"Congo - Brazzaville":[15.2,-0.8],"Republic of the Congo":[15.2,-0.8],"Myanmar (Burma)":[96.5,21.1],"Türkiye":[35.4,39.1],"North Macedonia":[21.7,41.6],"Eswatini":[31.5,-26.6],"Swaziland":[31.5,-26.6],"Cape Verde":[-23.6,15.1],"Solomon Islands":[160.2,-9.6],"Marshall Islands":[171.2,7.1],"Falkland Islands":[-58.8,-51.7],"Faroe Islands":[-6.9,62.2],"Western Sahara":[-12.3,24.2],"Cayman Islands":[-81.3,19.3],"British Virgin Islands":[-64.6,18.4],"U.S. Virgin Islands":[-64.8,17.7],"Turks & Caicos Islands":[-71.7,21.8],"Northern Mariana Islands":[145.7,15.2],"St. Kitts & Nevis":[-62.7,17.3],"St. Vincent & Grenadines":[-61.2,13.3],"Russian Federation":[95.5,65.9],"Islamic Republic of Iran":[54.4,32.5],"Iran, Islamic Republic of":[54.4,32.5],"Viet Nam":[106.3,16.5],"Lao People's Democratic Republic":[103.8,18.5],"Macao SAR China":[113.5,22.2],"Hong Kong SAR China":[114.1,22.4],"Republic of Moldova":[28.5,47.2],"Syrian Arab Republic":[38.5,35],"Czech Republic":[15.3,49.7],"Palestinian Territories":[35.2,31.9],"Trinidad & Tobago":[-61.3,10.4],"São Tomé & Príncipe":[6.6,0.2],"French Polynesia":[-149.4,-17.7],"Antigua & Barbuda":[-61.8,17.1]};
+
+// ---- world map with bubbles ----
+let WORLD = null, mapState = null;
+const MAP_W = 960, MAP_H = 470;
+fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json").then(r => r.json()).then(t => {
+  WORLD = topojson.feature(t, t.objects.countries);
+  WORLD.features = WORLD.features.filter(f => f.properties.name !== "Antarctica");
+  if (mapState) renderMap(...mapState);
+}).catch(() => { document.getElementById("map").innerHTML = '<div class="empty">Map could not load</div>'; });
+
+function renderMap(rows, key, noun) {
+  mapState = [rows, key, noun];
+  const box = document.getElementById("map"), foot = document.getElementById("map-foot");
+  if (!WORLD || typeof d3 === "undefined" || !d3.geoNaturalEarth1) return;
+  const proj = d3.geoNaturalEarth1().fitExtent([[4, 4], [MAP_W - 4, MAP_H - 4]], WORLD);
+  const path = d3.geoPath(proj);
+  const placed = [], missing = [];
+  rows.forEach(r => {
+    const name = r.country, v = r[key] || 0;
+    if (!v) return;
+    const ll = CENTROIDS[name] || CENTROIDS[String(name).replace(/ & /g, " and ")];
+    if (!ll) { missing.push(r); return; }
+    const [x, y] = proj(ll);
+    placed.push({ name, v, x, y });
+  });
+  const max = Math.max(1, ...placed.map(p => p.v)), total = rows.reduce((s, r) => s + (r[key] || 0), 0);
+  const R = 34, rOf = v => Math.max(3, Math.sqrt(v / max) * R);
+  placed.sort((a, b) => b.v - a.v);
+  const land = WORLD.features.map(f => `<path class="land" d="${path(f)}"></path>`).join("");
+  const bubbles = placed.map((p, i) => `<circle class="bubble" data-i="${i}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${rOf(p.v).toFixed(1)}"></circle>`).join("");
+  const labels = placed.slice(0, 3).map(p => {
+    const r = rOf(p.v), right = p.x < MAP_W - 160;
+    return `<text class="lbl" x="${(p.x + (right ? r + 5 : -r - 5)).toFixed(1)}" y="${(p.y + 4).toFixed(1)}" text-anchor="${right ? "start" : "end"}">${esc(p.name)} <tspan>${fmt(p.v)}</tspan></text>`;
+  }).join("");
+  box.innerHTML = placed.length
+    ? `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="World map of ${noun} by country">${land}${bubbles}${labels}</svg><div class="map-tip"></div>`
+    : `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="World map">${land}</svg><div class="empty" style="position:absolute;inset:0;display:grid;place-items:center">No data yet</div>`;
+  const tip = box.querySelector(".map-tip"), svg = box.querySelector("svg");
+  if (tip) box.querySelectorAll(".bubble").forEach(c => {
+    const p = placed[+c.dataset.i];
+    const show = () => {
+      const s = svg.getBoundingClientRect(), b = box.getBoundingClientRect(), k = s.width / MAP_W;
+      tip.innerHTML = `<b>${esc(p.name)}</b><br>${fmt(p.v)} ${noun} <span>· ${(p.v / total * 100).toFixed(1)}%</span>`;
+      tip.style.left = `${s.left - b.left + p.x * k}px`;
+      tip.style.top = `${s.top - b.top + (p.y - rOf(p.v)) * k}px`;
+      tip.style.display = "block"; c.classList.add("hot");
+    };
+    c.addEventListener("mouseenter", show); c.addEventListener("click", show);
+    c.addEventListener("mouseleave", () => { tip.style.display = "none"; c.classList.remove("hot"); });
+  });
+  const miss = missing.filter(m => m.country !== "(not set)");
+  const unknown = missing.filter(m => m.country === "(not set)").reduce((s, m) => s + m[key], 0);
+  const bits = [];
+  if (placed.length) bits.push(`Bubble size shows ${noun}. Hover or tap a bubble for details.`);
+  if (unknown) bits.push(`${fmt(unknown)} ${noun} from unknown locations aren't shown.`);
+  if (miss.length) bits.push(`Not on map: ${miss.map(m => `${m.country} (${fmt(m[key])})`).join(", ")}.`);
+  foot.textContent = bits.join(" ");
+}
+
 function applyRange(key) {
   if (!DATA || !DATA.ranges[key]) return;
   currentRange = key;
@@ -412,15 +493,20 @@ function applyRange(key) {
     renderPages(pages);
     renderBars("channels", combine(H.channels, r.channels, "sessionDefaultChannelGroup", "sessions"), "sessionDefaultChannelGroup", "sessions");
     const gaCountries = r.countries.map(c => ({ country: c.country, sessions: c.sessions ?? c.activeUsers }));
-    renderBars("countries", combine(H.countries, gaCountries, "country", "sessions").slice(0, 10), "country", "sessions");
+    const allCountries = combine(H.countries, gaCountries, "country", "sessions");
+    renderBars("countries", allCountries.slice(0, 10), "country", "sessions");
+    renderMap(allCountries, "sessions", "visits");
+    setSub("sub-map", "Visits by country, all time", "Squarespace + Google Analytics combined");
     setSub("sub-pages", "By page views, all time", "Squarespace + Google Analytics combined");
     setSub("sub-channels", "Visits by channel, all time", "Squarespace + Google Analytics combined");
     setSub("sub-countries", "Visits by country, all time", "Squarespace + Google Analytics combined");
   } else {
     renderPages(r.topPages);
     renderBars("channels", r.channels, "sessionDefaultChannelGroup", "sessions");
-    renderBars("countries", r.countries, "country", "activeUsers");
+    renderBars("countries", r.countries.slice(0, 10), "country", "activeUsers");
+    renderMap(r.countries, "activeUsers", "visitors");
     const note = blended ? sinceGA : "";
+    setSub("sub-map", `Visitors by country, ${t.label}`, note);
     setSub("sub-pages", `By page views, ${t.label}`, note);
     setSub("sub-channels", `Visits by channel, ${t.label}`, note);
     setSub("sub-countries", `Visitors by country, ${t.label}`, note);
