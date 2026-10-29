@@ -61,12 +61,15 @@ KPI_METRICS = ["activeUsers", "newUsers", "sessions", "screenPageViews",
                "engagementRate", "averageSessionDuration"]
 
 # 1. Headline numbers: last 30 days vs the 30 days before
-kpi_rows = run(["dateRange"], KPI_METRICS, [LAST_30, PREV_30])
 blank = {m: 0.0 for m in KPI_METRICS}
-kpis = {
-    "current": next((r for r in kpi_rows if r["dateRange"] == "current"), blank),
-    "previous": next((r for r in kpi_rows if r["dateRange"] == "previous"), blank),
-}
+
+
+def totals(date_range):
+    rows = run([], KPI_METRICS, [date_range])
+    return rows[0] if rows else dict(blank)
+
+
+kpis = {"current": totals(LAST_30), "previous": totals(PREV_30)}
 
 # 2. Daily trend, last 90 days
 daily = run(["date"], ["activeUsers", "sessions", "screenPageViews"], [LAST_90])
