@@ -93,6 +93,9 @@ td.n { padding-left: 16px; color: var(--ink-2); }
 .empty { color: var(--muted); padding: 24px 0; text-align: center; }
 .notice { background: var(--series-soft); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; color: var(--ink-2); }
 .notice strong { color: var(--ink); }
+.kpi-note { color: var(--muted); font-size: 12.5px; margin: -6px 2px 16px; }
+.kpi-note:empty { display: none; }
+.card .sub .src { display: block; margin-top: 2px; font-style: italic; }
 footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: center; }
 @media (max-width: 520px) { .seg.range { width: 100%; } .seg.range button { flex: 1; padding: 6px 4px; font-size: 12px; } .meta { text-align: left; } h1 { font-size: 22px; } .grid2 { grid-template-columns: 1fr; } }
 </style>
@@ -127,6 +130,7 @@ footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: cen
 
   <div id="notice"></div>
   <section class="kpis" id="kpis" aria-label="Key numbers"></section>
+  <p class="kpi-note" id="kpi-note"></p>
 
   <section class="card">
     <div class="card-head">
@@ -146,68 +150,132 @@ footer { margin-top: 28px; color: var(--muted); font-size: 12px; text-align: cen
   <div class="grid2">
     <section class="card">
       <h2>Top pages</h2>
-      <p class="sub">By page views, <span class="rl">last 30 days</span></p>
+      <p class="sub" id="sub-pages">By page views, last 30 days</p>
       <div id="pages"></div>
     </section>
     <section class="card">
       <h2>How people find the site</h2>
-      <p class="sub">Visits by channel, <span class="rl">last 30 days</span></p>
+      <p class="sub" id="sub-channels">Visits by channel, last 30 days</p>
       <div class="bars" id="channels"></div>
     </section>
     <section class="card">
       <h2>Where visitors are</h2>
-      <p class="sub">Visitors by country, <span class="rl">last 30 days</span></p>
+      <p class="sub" id="sub-countries">Visitors by country, last 30 days</p>
       <div class="bars" id="countries"></div>
     </section>
     <section class="card">
       <h2>Referring sites</h2>
-      <p class="sub">Visits by source, <span class="rl">last 30 days</span></p>
+      <p class="sub" id="sub-sources">Visits by source, last 30 days</p>
       <div class="bars" id="sources"></div>
     </section>
     <section class="card">
       <h2>Devices</h2>
-      <p class="sub">Share of visitors, <span class="rl">last 30 days</span></p>
+      <p class="sub" id="sub-devices">Share of visitors, last 30 days</p>
       <div class="bars" id="devices"></div>
     </section>
   </div>
 
-  <footer>Data from Google Analytics 4 · refreshes every morning</footer>
+  <footer>Google Analytics 4 from Oct 28, 2026 · Squarespace Analytics history before that · refreshes every morning</footer>
 </div>
 
 <script>
 const fmt = n => Math.round(n).toLocaleString("en-CA");
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+// ---- dates (all as "YYYY-MM-DD" strings) ----
+const addDays = (iso, n) => { const d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+const nice = (iso, opts = { month: "short", day: "numeric", year: "numeric" }) => new Date(iso + "T12:00:00").toLocaleDateString("en-CA", opts);
+
+const RANGE_TEXT = {
+  "7d":   { days: 7,    label: "last 7 days",    short: "7 days" },
+  "30d":  { days: 30,   label: "last 30 days",   short: "30 days" },
+  "90d":  { days: 90,   label: "last 90 days",   short: "90 days" },
+  "365d": { days: 365,  label: "last 12 months", short: "12 months" },
+  "all":  { days: null, label: "all time",       short: "" },
+};
+let currentRange = "30d", DATA = null, HIST = null, GA_START = "2026-10-28", LAST_DAY = null, merged = [], chart;
+try { const saved = localStorage.getItem("bl-range"); if (RANGE_TEXT[saved]) currentRange = saved; } catch (e) {}
 
 function duration(sec) {
   const m = Math.floor(sec / 60), s = Math.round(sec % 60);
   return m ? `${m}m ${String(s).padStart(2, "0")}s` : `${s}s`;
 }
 
-function delta(cur, prev, isRate) {
-  if (prev === null || prev === undefined) return `<div class="delta flat"><span>since tracking began</span></div>`;
+// kind: "pct" (percent change), "pts" (rate change, higher is better), "pts-inv" (rate change, lower is better)
+function delta(cur, prev, kind = "pct") {
+  if (prev === null || prev === undefined) return `<div class="delta flat"><span>all recorded history</span></div>`;
   if (!prev) return `<div class="delta flat">— <span>no earlier data</span></div>`;
-  const diff = isRate ? (cur - prev) * 100 : ((cur - prev) / prev) * 100;
-  const cls = Math.abs(diff) < 0.5 ? "flat" : diff > 0 ? "up" : "down";
-  const arrow = cls === "up" ? "▲" : cls === "down" ? "▼" : "";
-  const txt = isRate ? `${Math.abs(diff).toFixed(1)} pts` : `${Math.abs(diff).toFixed(0)}%`;
+  const diff = kind === "pct" ? ((cur - prev) / prev) * 100 : (cur - prev) * 100;
+  const good = kind === "pts-inv" ? diff < 0 : diff > 0;
+  const cls = Math.abs(diff) < 0.5 ? "flat" : good ? "up" : "down";
+  const arrow = Math.abs(diff) < 0.5 ? "" : diff > 0 ? "▲" : "▼";
+  const txt = kind === "pct" ? `${Math.abs(diff).toFixed(0)}%` : `${Math.abs(diff).toFixed(1)} pts`;
   return `<div class="delta ${cls}">${arrow} ${txt} <span>vs previous ${RANGE_TEXT[currentRange].short}</span></div>`;
 }
 
-function renderKpis(k) {
-  const c = k.current, p = k.previous || {};
-  const noPrev = !k.previous;
-  const dl = (a, b, r) => noPrev ? delta(a, null) : delta(a, b, r);
-  const items = [
-    ["Visitors", fmt(c.activeUsers), dl(c.activeUsers, p.activeUsers)],
-    ["New visitors", fmt(c.newUsers), dl(c.newUsers, p.newUsers)],
-    ["Visits", fmt(c.sessions), dl(c.sessions, p.sessions)],
-    ["Page views", fmt(c.screenPageViews), dl(c.screenPageViews, p.screenPageViews)],
-    ["Engagement rate", `${(c.engagementRate * 100).toFixed(0)}%`, dl(c.engagementRate, p.engagementRate, true)],
-    ["Avg. visit length", duration(c.averageSessionDuration), dl(c.averageSessionDuration, p.averageSessionDuration)],
-  ];
-  document.getElementById("kpis").innerHTML = items.map(([l, v, d]) =>
-    `<div class="card kpi"><div class="label">${l}</div><div class="value">${v}</div>${d}</div>`).join("");
+const card = (label, value, d) => `<div class="card kpi"><div class="label">${label}</div><div class="value">${value}</div>${d}</div>`;
+
+// ---- merged daily series: Squarespace before GA_START, Google Analytics from GA_START ----
+function buildMerged() {
+  const byDate = new Map();
+  if (HIST) HIST.daily.forEach(r => { if (r.date < GA_START) byDate.set(r.date, { ...r, src: "sq" }); });
+  DATA.daily.forEach(r => { if (!HIST || r.date >= GA_START) byDate.set(r.date, { ...r, src: "ga" }); });
+  const dates = [...byDate.keys()].sort();
+  const first = dates.length ? dates[0] : LAST_DAY;
+  const out = [];
+  for (let d = first; d <= LAST_DAY; d = addDays(d, 1)) {
+    out.push(byDate.get(d) || { date: d, activeUsers: 0, sessions: 0, screenPageViews: 0, src: d < GA_START && HIST ? "sq" : "ga" });
+  }
+  merged = out;
+}
+
+function bounds(key) {
+  const days = RANGE_TEXT[key].days;
+  const end = LAST_DAY;
+  const start = days ? addDays(end, -(days - 1)) : (merged[0] ? merged[0].date : end);
+  return { start, end, days };
+}
+
+function agg(start, end) {
+  let v = 0, s = 0, p = 0, bW = 0, bS = 0;
+  for (const r of merged) {
+    if (r.date < start || r.date > end) continue;
+    v += r.activeUsers; s += r.sessions; p += r.screenPageViews;
+    if (r.bounceRate !== undefined && r.sessions) { bW += r.bounceRate * r.sessions; bS += r.sessions; }
+  }
+  return { visitors: v, visits: s, views: p, perVisit: s ? p / s : 0, bounce: bS ? bW / bS : 0 };
+}
+
+function renderKpis(key, blended) {
+  const el = document.getElementById("kpis"), note = document.getElementById("kpi-note");
+  if (!blended) {
+    const k = DATA.ranges[key].kpis, c = k.current, p = k.previous || {}, noPrev = !k.previous;
+    const dl = (a, b, kind) => noPrev ? delta(a, null) : delta(a, b, kind);
+    el.innerHTML = [
+      card("Visitors", fmt(c.activeUsers), dl(c.activeUsers, p.activeUsers)),
+      card("New visitors", fmt(c.newUsers), dl(c.newUsers, p.newUsers)),
+      card("Visits", fmt(c.sessions), dl(c.sessions, p.sessions)),
+      card("Page views", fmt(c.screenPageViews), dl(c.screenPageViews, p.screenPageViews)),
+      card("Engagement rate", `${(c.engagementRate * 100).toFixed(0)}%`, dl(c.engagementRate, p.engagementRate, "pts")),
+      card("Avg. visit length", duration(c.averageSessionDuration), dl(c.averageSessionDuration, p.averageSessionDuration)),
+    ].join("");
+    note.textContent = "";
+    return;
+  }
+  const { start, end, days } = bounds(key);
+  const c = agg(start, end);
+  const p = days ? agg(addDays(start, -days), addDays(start, -1)) : null;
+  const dl = (a, b, kind) => p ? delta(a, b, kind) : delta(a, null);
+  el.innerHTML = [
+    card("Visitors", fmt(c.visitors), dl(c.visitors, p && p.visitors)),
+    card("Visits", fmt(c.visits), dl(c.visits, p && p.visits)),
+    card("Page views", fmt(c.views), dl(c.views, p && p.views)),
+    card("Pages per visit", c.perVisit.toFixed(2), dl(c.perVisit, p && p.perVisit)),
+    card("Bounce rate", `${(c.bounce * 100).toFixed(0)}%`, dl(c.bounce, p && p.bounce, "pts-inv")),
+  ].join("");
+  note.textContent = `Includes Squarespace history before ${nice(GA_START)}. Visitors here are counted per day and added up, so someone who visits on two different days counts twice.`;
 }
 
 function renderBars(id, rows, labelKey, valueKey, asShare) {
@@ -219,9 +287,10 @@ function renderBars(id, rows, labelKey, valueKey, asShare) {
     const share = total ? (r[valueKey] / total) * 100 : 0;
     const num = asShare ? `${share.toFixed(0)}%` : `${fmt(r[valueKey])} <span style="color:var(--muted)">· ${share.toFixed(0)}%</span>`;
     const w = max ? (r[valueKey] / max) * 100 : 0;
-    const name = r[labelKey] === "(not set)" || r[labelKey] === "(direct)" ? (r[labelKey] === "(direct)" ? "Direct (typed or bookmarked)" : "Unknown") : r[labelKey];
+    const raw = r[labelKey];
+    const name = raw === "(direct)" ? "Direct (typed or bookmarked)" : raw === "(not set)" ? "Unknown" : raw;
     return `<div class="bar-row" title="${esc(name)}: ${fmt(r[valueKey])}">
-      <div class="name">${esc(name.charAt(0).toUpperCase() + name.slice(1))}</div><div class="num">${num}</div>
+      <div class="name">${esc(cap(name))}</div><div class="num">${num}</div>
       <div class="track"><div class="fill" style="width:${w.toFixed(1)}%"></div></div></div>`;
   }).join("");
 }
@@ -229,126 +298,182 @@ function renderBars(id, rows, labelKey, valueKey, asShare) {
 function renderPages(rows) {
   const el = document.getElementById("pages");
   if (!rows.length) { el.innerHTML = `<div class="empty">No data yet</div>`; return; }
-  el.innerHTML = `<table><thead><tr><th>Page</th><th class="n">Views</th><th class="n">Visitors</th></tr></thead><tbody>${
+  const showVisitors = rows.every(r => r.activeUsers !== undefined);
+  el.innerHTML = `<table><thead><tr><th>Page</th><th class="n">Views</th>${showVisitors ? '<th class="n">Visitors</th>' : ""}</tr></thead><tbody>${
     rows.map(r => `<tr><td><div class="t">${esc(r.pageTitle || r.pagePath)}</div><div class="p">${esc(r.pagePath)}</div></td>
-      <td class="n">${fmt(r.screenPageViews)}</td><td class="n">${fmt(r.activeUsers)}</td></tr>`).join("")
+      <td class="n">${fmt(r.screenPageViews)}</td>${showVisitors ? `<td class="n">${fmt(r.activeUsers)}</td>` : ""}</tr>`).join("")
   }</tbody></table>`;
 }
 
-let chart, dailyData = [];
-const labels = { activeUsers: "Daily visitors", sessions: "Daily visits", screenPageViews: "Daily page views" };
+// add up rows from two sources by a key
+function combine(a, b, key, val, extra) {
+  const m = new Map();
+  [...a, ...b].forEach(r => {
+    const k = r[key], cur = m.get(k) || { [key]: k, [val]: 0 };
+    cur[val] += r[val] || 0;
+    if (extra) extra(cur, r);
+    m.set(k, cur);
+  });
+  return [...m.values()].sort((x, y) => y[val] - x[val]);
+}
+
+const metricLabels = { activeUsers: "Daily visitors", sessions: "Daily visits", screenPageViews: "Daily page views" };
+
+// draws a dashed line where Squarespace data ends and Google Analytics begins
+const changeover = {
+  id: "changeover",
+  afterDatasetsDraw(c, args, opts) {
+    if (opts.index === undefined || opts.index < 0) return;
+    const x = c.scales.x.getPixelForValue(opts.index), { top, bottom } = c.chartArea, g = c.ctx;
+    g.save();
+    g.strokeStyle = css("--muted"); g.setLineDash([4, 4]); g.lineWidth = 1;
+    g.beginPath(); g.moveTo(x, top); g.lineTo(x, bottom); g.stroke();
+    g.setLineDash([]); g.fillStyle = css("--ink-2"); g.font = "500 11.5px Inter, system-ui, sans-serif";
+    const left = "← Squarespace", right = "Google Analytics →";
+    const lw = g.measureText(left).width, rw = g.measureText(right).width;
+    if (x - lw - 6 > c.chartArea.left) { g.textAlign = "right"; g.fillText(left, x - 6, top + 12); }
+    if (x + rw + 6 < c.chartArea.right) { g.textAlign = "left"; g.fillText(right, x + 6, top + 12); }
+    else { g.textAlign = "right"; g.fillText("Google Analytics", c.chartArea.right, top + 26); }
+    g.restore();
+  },
+};
 
 function renderTrend(metric) {
-  document.getElementById("trend-title").textContent = labels[metric];
-  const ctx = document.getElementById("trend");
-  const days = RANGE_TEXT[currentRange].days;
-  let rows = dailyData;
-  if (days) {
-    // count back from the newest day in the data (GA ranges end "yesterday")
-    const last = dailyData.length ? new Date(dailyData[dailyData.length - 1].date + "T12:00:00Z") : new Date();
-    last.setUTCDate(last.getUTCDate() - (days - 1));
-    const cutStr = last.toISOString().slice(0, 10);
-    rows = dailyData.filter(d => d.date >= cutStr);
-  }
-  const longSpan = rows.length > 400;
-  const pts = rows.map(d => d[metric]);
-  const xs = rows.map(d => new Date(d.date + "T12:00:00").toLocaleDateString("en-CA",
-    longSpan ? { month: "short", year: "numeric" } : { month: "short", day: "numeric" }));
+  document.getElementById("trend-title").textContent = metricLabels[metric];
+  const { start, end } = bounds(currentRange);
+  const rows = merged.filter(r => r.date >= start && r.date <= end);
+  const span = rows.length;
+  const fmtOpts = span > 400 ? { month: "short", year: "numeric" } : { month: "short", day: "numeric" };
+  const switchIdx = HIST ? rows.findIndex(r => r.src === "ga") : -1;
+  const showSwitch = switchIdx > 0;
   if (chart) chart.destroy();
-  chart = new Chart(ctx, {
+  chart = new Chart(document.getElementById("trend"), {
     type: "line",
-    data: { labels: xs, datasets: [{
-      data: pts, borderColor: css("--series"), backgroundColor: css("--series-soft"),
-      borderWidth: 2, fill: true, tension: 0.25,
-      pointRadius: rows.length <= 14 ? 3 : 0, pointBackgroundColor: css("--series"), pointHoverRadius: 5, pointHoverBorderWidth: 2,
+    data: { labels: rows.map(r => nice(r.date, fmtOpts)), datasets: [{
+      data: rows.map(r => r[metric]), borderColor: css("--series"), backgroundColor: css("--series-soft"),
+      borderWidth: span > 700 ? 1.25 : 2, fill: true, tension: span > 200 ? 0 : 0.25,
+      pointRadius: span <= 14 ? 3 : 0, pointBackgroundColor: css("--series"), pointHoverRadius: 5, pointHoverBorderWidth: 2,
       pointHoverBackgroundColor: css("--series"), pointHoverBorderColor: css("--surface"),
     }]},
     options: {
-      responsive: true, maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false, animation: span > 700 ? false : undefined,
       interaction: { mode: "index", intersect: false },
       plugins: {
         legend: { display: false },
+        changeover: { index: showSwitch ? switchIdx : -1 },
         tooltip: {
           backgroundColor: css("--surface"), titleColor: css("--ink-2"), bodyColor: css("--ink"),
           borderColor: css("--border"), borderWidth: 1, padding: 10, displayColors: false,
-          callbacks: { label: c => `${fmt(c.parsed.y)} ${labels[metric].replace("Daily ", "")}` },
+          callbacks: {
+            title: items => { const r = rows[items[0].dataIndex]; return nice(r.date, { weekday: "short", month: "short", day: "numeric", year: "numeric" }); },
+            label: c => `${fmt(c.parsed.y)} ${metricLabels[metric].replace("Daily ", "")}`,
+            footer: items => HIST ? (rows[items[0].dataIndex].src === "sq" ? "Source: Squarespace" : "Source: Google Analytics") : "",
+          },
+          footerColor: css("--muted"), footerFont: { weight: "400", size: 11 },
         },
       },
       scales: {
         x: { grid: { display: false }, border: { color: css("--axis") },
-             ticks: { color: css("--muted"), maxTicksLimit: 7, maxRotation: 0, font: { size: 11.5 } } },
+             ticks: { color: css("--muted"), maxTicksLimit: 7, maxRotation: 0, autoSkipPadding: 12, font: { size: 11.5 } } },
         y: { beginAtZero: true, grid: { color: css("--grid") }, border: { display: false },
              ticks: { color: css("--muted"), precision: 0, maxTicksLimit: 5, font: { size: 11.5 } } },
       },
     },
+    plugins: [changeover],
   });
+  const t = RANGE_TEXT[currentRange];
+  document.getElementById("trend-sub").textContent = cap(t.label) +
+    (showSwitch ? ` · Squarespace before ${nice(GA_START)}, Google Analytics after` : "");
 }
 
-document.querySelectorAll("#metric button").forEach(b => b.addEventListener("click", () => {
-  document.querySelectorAll("#metric button").forEach(x => x.classList.toggle("on", x === b));
-  renderTrend(b.dataset.m);
-}));
-
-const RANGE_TEXT = {
-  "7d":   { days: 7,    label: "last 7 days",    short: "7 days" },
-  "30d":  { days: 30,   label: "last 30 days",   short: "30 days" },
-  "90d":  { days: 90,   label: "last 90 days",   short: "90 days" },
-  "365d": { days: 365,  label: "last 12 months", short: "12 months" },
-  "all":  { days: null, label: "all time",       short: "" },
-};
-let currentRange = "30d", DATA = null;
-try { const saved = localStorage.getItem("bl-range"); if (RANGE_TEXT[saved]) currentRange = saved; } catch (e) {}
+function setSub(id, text, note) {
+  document.getElementById(id).innerHTML = esc(text) + (note ? `<span class="src">${esc(note)}</span>` : "");
+}
 
 function applyRange(key) {
   if (!DATA || !DATA.ranges[key]) return;
   currentRange = key;
   try { localStorage.setItem("bl-range", key); } catch (e) {}
   document.querySelectorAll("#range button").forEach(x => x.classList.toggle("on", x.dataset.r === key));
-  const t = RANGE_TEXT[key];
+  const t = RANGE_TEXT[key], r = DATA.ranges[key];
+  const { start } = bounds(key);
+  const blended = !!HIST && start < GA_START;
+  const sinceGA = `Google Analytics only, from ${nice(GA_START)}`;
   document.getElementById("range-meta").textContent = key === "all" ? "all time" : `${t.label} vs previous ${t.short}`;
-  document.querySelectorAll(".rl").forEach(s => s.textContent = t.label);
-  document.getElementById("trend-sub").textContent = t.label.charAt(0).toUpperCase() + t.label.slice(1);
-  const r = DATA.ranges[key];
-  renderKpis(r.kpis);
+
+  renderKpis(key, blended);
   renderTrend(document.querySelector("#metric button.on").dataset.m);
-  renderPages(r.topPages);
-  renderBars("channels", r.channels, "sessionDefaultChannelGroup", "sessions");
-  renderBars("countries", r.countries, "country", "activeUsers");
+
+  if (key === "all" && HIST) {
+    // all-time breakdowns: Squarespace lifetime totals + Google Analytics since the switch
+    const H = HIST.allTime;
+    const pages = combine(H.topPages, r.topPages.map(p => ({ pagePath: p.pagePath, pageTitle: p.pageTitle, screenPageViews: p.screenPageViews })),
+      "pagePath", "screenPageViews", (cur, row) => { if (row.pageTitle && !cur.pageTitle) cur.pageTitle = row.pageTitle; }).slice(0, 10);
+    renderPages(pages);
+    renderBars("channels", combine(H.channels, r.channels, "sessionDefaultChannelGroup", "sessions"), "sessionDefaultChannelGroup", "sessions");
+    const gaCountries = r.countries.map(c => ({ country: c.country, sessions: c.sessions ?? c.activeUsers }));
+    renderBars("countries", combine(H.countries, gaCountries, "country", "sessions").slice(0, 10), "country", "sessions");
+    setSub("sub-pages", "By page views, all time", "Squarespace + Google Analytics combined");
+    setSub("sub-channels", "Visits by channel, all time", "Squarespace + Google Analytics combined");
+    setSub("sub-countries", "Visits by country, all time", "Squarespace + Google Analytics combined");
+  } else {
+    renderPages(r.topPages);
+    renderBars("channels", r.channels, "sessionDefaultChannelGroup", "sessions");
+    renderBars("countries", r.countries, "country", "activeUsers");
+    const note = blended ? sinceGA : "";
+    setSub("sub-pages", `By page views, ${t.label}`, note);
+    setSub("sub-channels", `Visits by channel, ${t.label}`, note);
+    setSub("sub-countries", `Visitors by country, ${t.label}`, note);
+  }
   renderBars("sources", r.sources, "sessionSource", "sessions");
   renderBars("devices", r.devices, "deviceCategory", "activeUsers", true);
+  setSub("sub-sources", `Visits by source, ${t.label}`, blended ? sinceGA : "");
+  setSub("sub-devices", `Share of visitors, ${t.label}`, blended ? sinceGA : "");
 }
 
+document.querySelectorAll("#metric button").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("#metric button").forEach(x => x.classList.toggle("on", x === b));
+  renderTrend(b.dataset.m);
+}));
 document.querySelectorAll("#range button").forEach(b => b.addEventListener("click", () => applyRange(b.dataset.r)));
 
-function render(d) {
+function render(d, hist) {
   const when = new Date(d.updated);
   document.getElementById("updated").textContent = isNaN(when) ? "—" :
     when.toLocaleString("en-CA", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Toronto" });
-  const days = d.daily.filter(r => r.activeUsers > 0).length;
-  if (days < 14) {
-    document.getElementById("notice").innerHTML = `<div class="notice"><strong>Still warming up.</strong>
-      Google Analytics started counting on this site recently (${days} day${days === 1 ? "" : "s"} of data so far),
-      so comparisons with the previous 30 days will fill in over the coming weeks.</div>`;
-  }
+  // the newest complete day = the day before the refresh ran (Toronto time)
+  const today = isNaN(when) ? new Date().toLocaleDateString("en-CA") : when.toLocaleDateString("en-CA", { timeZone: "America/Toronto" });
+  LAST_DAY = addDays(today, -1);
   if (!d.ranges) d.ranges = { "30d": { kpis: d.kpis, topPages: d.topPages, channels: d.channels,
     countries: d.countries, devices: d.devices, sources: d.sources } };  // older data file
-  DATA = d;
-  dailyData = d.daily;
+  DATA = d; HIST = hist || null;
+  if (HIST && HIST.gaStart) GA_START = HIST.gaStart;
+  buildMerged();
+  const gaDays = d.daily.filter(r => r.activeUsers > 0).length;
+  if (!HIST && gaDays < 14) {
+    document.getElementById("notice").innerHTML = `<div class="notice"><strong>Still warming up.</strong>
+      Google Analytics started counting on this site recently (${gaDays} day${gaDays === 1 ? "" : "s"} of data so far),
+      so comparisons will fill in over the coming weeks.</div>`;
+  }
   document.querySelectorAll("#range button").forEach(b => { b.disabled = !d.ranges[b.dataset.r]; if (b.disabled) b.style.opacity = .4; });
   applyRange(d.ranges[currentRange] ? currentRange : "30d");
 }
 
-if (window.SAMPLE_DATA) render(window.SAMPLE_DATA);
-else fetch("data/website.json?v=" + Date.now())
-  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-  .then(render)
-  .catch(() => {
-    document.getElementById("notice").innerHTML = `<div class="notice"><strong>No data yet.</strong>
-      The first refresh hasn't run. In GitHub, open Actions → Refresh analytics → Run workflow.</div>`;
-  });
+if (window.SAMPLE_DATA) render(window.SAMPLE_DATA, window.SAMPLE_HISTORY);
+else {
+  const bust = "?v=" + Date.now();
+  const hist = fetch("data/squarespace-history.json").then(r => r.ok ? r.json() : null).catch(() => null);
+  fetch("data/website.json" + bust)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(d => hist.then(h => render(d, h)))
+    .catch(() => {
+      document.getElementById("notice").innerHTML = `<div class="notice"><strong>No data yet.</strong>
+        The first refresh hasn't run. In GitHub, open Actions → Refresh analytics → Run workflow.</div>`;
+    });
+}
 
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-  const on = document.querySelector("#metric button.on"); if (dailyData.length) renderTrend(on.dataset.m);
+  const on = document.querySelector("#metric button.on"); if (merged.length) renderTrend(on.dataset.m);
 });
 </script>
 </body>

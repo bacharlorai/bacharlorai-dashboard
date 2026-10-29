@@ -81,7 +81,7 @@ def frame(days):
                         [cur], order_metric="screenPageViews", limit=10),
         "channels": run(["sessionDefaultChannelGroup"], ["sessions"], [cur],
                         order_metric="sessions", limit=8),
-        "countries": run(["country"], ["activeUsers"], [cur],
+        "countries": run(["country"], ["activeUsers", "sessions"], [cur],
                          order_metric="activeUsers", limit=10),
         "devices": run(["deviceCategory"], ["activeUsers"], [cur],
                        order_metric="activeUsers"),
@@ -91,7 +91,7 @@ def frame(days):
 
 
 # Daily trend for the whole history; the page trims it to the chosen time frame
-daily = run(["date"], ["activeUsers", "sessions", "screenPageViews"],
+daily = run(["date"], ["activeUsers", "sessions", "screenPageViews", "bounceRate"],
             [DateRange(start_date=FIRST_DAY, end_date="yesterday")])
 daily.sort(key=lambda r: r["date"])
 for r in daily:
