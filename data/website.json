@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-29T10:54+00:00",
+ "updated": "2026-10-30T10:53+00:00",
  "propertyId": "561298290",
  "daily": [
   {
@@ -8,19 +8,26 @@
    "sessions": 35.0,
    "screenPageViews": 37.0,
    "bounceRate": 0.8285714285714286
+  },
+  {
+   "date": "2026-10-29",
+   "activeUsers": 77.0,
+   "sessions": 87.0,
+   "screenPageViews": 145.0,
+   "bounceRate": 0.45977011494252873
   }
  ],
  "ranges": {
   "7d": {
    "kpis": {
     "current": {
-     "activeUsers": 34.0,
-     "newUsers": 34.0,
-     "sessions": 35.0,
-     "screenPageViews": 37.0,
-     "engagementRate": 0.17142857142857143,
-     "averageSessionDuration": 28.449563457142858,
-     "bounceRate": 0.8285714285714286
+     "activeUsers": 111.0,
+     "newUsers": 111.0,
+     "sessions": 122.0,
+     "screenPageViews": 182.0,
+     "engagementRate": 0.4344262295081967,
+     "averageSessionDuration": 88.69820904918035,
+     "bounceRate": 0.5655737704918032
     },
     "previous": {
      "activeUsers": 0.0,
@@ -36,14 +43,38 @@
     {
      "pagePath": "/welfare/impact25",
      "pageTitle": "Impact25 Awards \u2014 BacharLorai Global",
-     "screenPageViews": 19.0,
-     "activeUsers": 19.0
+     "screenPageViews": 73.0,
+     "activeUsers": 58.0
     },
     {
      "pagePath": "/",
      "pageTitle": "BacharLorai Global",
-     "screenPageViews": 8.0,
+     "screenPageViews": 35.0,
+     "activeUsers": 25.0
+    },
+    {
+     "pagePath": "/research/youth-voices",
+     "pageTitle": "Youth Voices Policy Essay Competition \u2014 BacharLorai Global",
+     "screenPageViews": 21.0,
+     "activeUsers": 13.0
+    },
+    {
+     "pagePath": "/impact25under25",
+     "pageTitle": "BacharLorai",
+     "screenPageViews": 13.0,
      "activeUsers": 7.0
+    },
+    {
+     "pagePath": "/community/impact-social",
+     "pageTitle": "Impact Social \u2014 BacharLorai Global",
+     "screenPageViews": 4.0,
+     "activeUsers": 3.0
+    },
+    {
+     "pagePath": "/opportunities",
+     "pageTitle": "Opportunities \u2014 BacharLorai Global",
+     "screenPageViews": 4.0,
+     "activeUsers": 5.0
     },
     {
      "pagePath": "/banglatown-ethnography/blog-post-title-one-xj9d5-wfe8x-w8n2x-9e44h-g8478-9znwg",
@@ -52,84 +83,128 @@
      "activeUsers": 3.0
     },
     {
-     "pagePath": "/community/impact-social",
-     "pageTitle": "Impact Social \u2014 BacharLorai Global",
-     "screenPageViews": 2.0,
+     "pagePath": "/community/ueccasecompetition25",
+     "pageTitle": "BacharLorai",
+     "screenPageViews": 3.0,
+     "activeUsers": 3.0
+    },
+    {
+     "pagePath": "/welfare/humanitarian-aid",
+     "pageTitle": "Humanitarian Aid \u2014 BacharLorai Global",
+     "screenPageViews": 3.0,
      "activeUsers": 1.0
     },
     {
-     "pagePath": "/research/youth-voices",
-     "pageTitle": "Youth Voices Policy Essay Competition \u2014 BacharLorai Global",
+     "pagePath": "/blg",
+     "pageTitle": "About Us \u2014 BacharLorai Global",
      "screenPageViews": 2.0,
      "activeUsers": 2.0
-    },
-    {
-     "pagePath": "/people",
-     "pageTitle": "People \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
-    },
-    {
-     "pagePath": "/research/23-24/policybrief/endingperiodpoverty",
-     "pageTitle": "23-24 Policy Brief - Ending Period Poverty \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
-    },
-    {
-     "pagePath": "/welfare/humanitarian/zero-gap-fund",
-     "pageTitle": "Zero Gap Education \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
     }
    ],
    "channels": [
     {
      "sessionDefaultChannelGroup": "Direct",
-     "sessions": 30.0
+     "sessions": 87.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Organic Search",
+     "sessions": 19.0
     },
     {
      "sessionDefaultChannelGroup": "Organic Social",
-     "sessions": 5.0
+     "sessions": 13.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Unassigned",
+     "sessions": 4.0
+    },
+    {
+     "sessionDefaultChannelGroup": "AI Assistant",
+     "sessions": 2.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Referral",
+     "sessions": 1.0
     }
    ],
    "countries": [
     {
      "country": "United States",
-     "activeUsers": 15.0,
-     "sessions": 15.0
-    },
-    {
-     "country": "Canada",
-     "activeUsers": 4.0,
-     "sessions": 5.0
-    },
-    {
-     "country": "",
-     "activeUsers": 3.0,
-     "sessions": 3.0
-    },
-    {
-     "country": "Singapore",
-     "activeUsers": 3.0,
-     "sessions": 3.0
-    },
-    {
-     "country": "Brazil",
-     "activeUsers": 2.0,
-     "sessions": 2.0
-    },
-    {
-     "country": "Nigeria",
-     "activeUsers": 2.0,
-     "sessions": 2.0
+     "activeUsers": 30.0,
+     "sessions": 30.0
     },
     {
      "country": "Bangladesh",
+     "activeUsers": 29.0,
+     "sessions": 33.0
+    },
+    {
+     "country": "Canada",
+     "activeUsers": 10.0,
+     "sessions": 13.0
+    },
+    {
+     "country": "Colombia",
+     "activeUsers": 9.0,
+     "sessions": 10.0
+    },
+    {
+     "country": "Singapore",
+     "activeUsers": 9.0,
+     "sessions": 9.0
+    },
+    {
+     "country": "Nigeria",
+     "activeUsers": 5.0,
+     "sessions": 6.0
+    },
+    {
+     "country": "Brazil",
+     "activeUsers": 4.0,
+     "sessions": 4.0
+    },
+    {
+     "country": "(not set)",
+     "activeUsers": 3.0,
+     "sessions": 3.0
+    },
+    {
+     "country": "Pakistan",
+     "activeUsers": 2.0,
+     "sessions": 2.0
+    },
+    {
+     "country": "Argentina",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
     {
-     "country": "Colombia",
+     "country": "Ecuador",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "France",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Ghana",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Guatemala",
+     "activeUsers": 1.0,
+     "sessions": 3.0
+    },
+    {
+     "country": "Hong Kong",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Hungary",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
@@ -139,7 +214,17 @@
      "sessions": 1.0
     },
     {
+     "country": "Indonesia",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
      "country": "Ireland",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Malaysia",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
@@ -154,6 +239,11 @@
      "sessions": 1.0
     },
     {
+     "country": "Sweden",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
      "country": "T\u00fcrkiye",
      "activeUsers": 1.0,
      "sessions": 1.0
@@ -162,26 +252,55 @@
    "devices": [
     {
      "deviceCategory": "desktop",
-     "activeUsers": 23.0,
-     "sessions": 23.0
+     "activeUsers": 66.0,
+     "sessions": 71.0
     },
     {
      "deviceCategory": "mobile",
-     "activeUsers": 11.0,
-     "sessions": 12.0
+     "activeUsers": 46.0,
+     "sessions": 52.0
+    },
+    {
+     "deviceCategory": "tablet",
+     "activeUsers": 1.0,
+     "sessions": 1.0
     }
    ],
    "sources": [
     {
      "sessionSource": "(direct)",
-     "sessions": 30.0
+     "sessions": 87.0
+    },
+    {
+     "sessionSource": "google",
+     "sessions": 17.0
     },
     {
      "sessionSource": "m.facebook.com",
+     "sessions": 9.0
+    },
+    {
+     "sessionSource": "(not set)",
      "sessions": 4.0
     },
     {
+     "sessionSource": "bing",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "chatgpt.com",
+     "sessions": 2.0
+    },
+    {
      "sessionSource": "l.instagram.com",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "lm.facebook.com",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "mail.google.com",
      "sessions": 1.0
     }
    ]
@@ -189,13 +308,13 @@
   "30d": {
    "kpis": {
     "current": {
-     "activeUsers": 34.0,
-     "newUsers": 34.0,
-     "sessions": 35.0,
-     "screenPageViews": 37.0,
-     "engagementRate": 0.17142857142857143,
-     "averageSessionDuration": 28.449563457142858,
-     "bounceRate": 0.8285714285714286
+     "activeUsers": 111.0,
+     "newUsers": 111.0,
+     "sessions": 122.0,
+     "screenPageViews": 182.0,
+     "engagementRate": 0.4344262295081967,
+     "averageSessionDuration": 88.69820904918035,
+     "bounceRate": 0.5655737704918032
     },
     "previous": {
      "activeUsers": 0.0,
@@ -211,14 +330,38 @@
     {
      "pagePath": "/welfare/impact25",
      "pageTitle": "Impact25 Awards \u2014 BacharLorai Global",
-     "screenPageViews": 19.0,
-     "activeUsers": 19.0
+     "screenPageViews": 73.0,
+     "activeUsers": 58.0
     },
     {
      "pagePath": "/",
      "pageTitle": "BacharLorai Global",
-     "screenPageViews": 8.0,
+     "screenPageViews": 35.0,
+     "activeUsers": 25.0
+    },
+    {
+     "pagePath": "/research/youth-voices",
+     "pageTitle": "Youth Voices Policy Essay Competition \u2014 BacharLorai Global",
+     "screenPageViews": 21.0,
+     "activeUsers": 13.0
+    },
+    {
+     "pagePath": "/impact25under25",
+     "pageTitle": "BacharLorai",
+     "screenPageViews": 13.0,
      "activeUsers": 7.0
+    },
+    {
+     "pagePath": "/community/impact-social",
+     "pageTitle": "Impact Social \u2014 BacharLorai Global",
+     "screenPageViews": 4.0,
+     "activeUsers": 3.0
+    },
+    {
+     "pagePath": "/opportunities",
+     "pageTitle": "Opportunities \u2014 BacharLorai Global",
+     "screenPageViews": 4.0,
+     "activeUsers": 5.0
     },
     {
      "pagePath": "/banglatown-ethnography/blog-post-title-one-xj9d5-wfe8x-w8n2x-9e44h-g8478-9znwg",
@@ -227,84 +370,128 @@
      "activeUsers": 3.0
     },
     {
-     "pagePath": "/community/impact-social",
-     "pageTitle": "Impact Social \u2014 BacharLorai Global",
-     "screenPageViews": 2.0,
+     "pagePath": "/community/ueccasecompetition25",
+     "pageTitle": "BacharLorai",
+     "screenPageViews": 3.0,
+     "activeUsers": 3.0
+    },
+    {
+     "pagePath": "/welfare/humanitarian-aid",
+     "pageTitle": "Humanitarian Aid \u2014 BacharLorai Global",
+     "screenPageViews": 3.0,
      "activeUsers": 1.0
     },
     {
-     "pagePath": "/research/youth-voices",
-     "pageTitle": "Youth Voices Policy Essay Competition \u2014 BacharLorai Global",
+     "pagePath": "/blg",
+     "pageTitle": "About Us \u2014 BacharLorai Global",
      "screenPageViews": 2.0,
      "activeUsers": 2.0
-    },
-    {
-     "pagePath": "/people",
-     "pageTitle": "People \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
-    },
-    {
-     "pagePath": "/research/23-24/policybrief/endingperiodpoverty",
-     "pageTitle": "23-24 Policy Brief - Ending Period Poverty \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
-    },
-    {
-     "pagePath": "/welfare/humanitarian/zero-gap-fund",
-     "pageTitle": "Zero Gap Education \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
     }
    ],
    "channels": [
     {
      "sessionDefaultChannelGroup": "Direct",
-     "sessions": 30.0
+     "sessions": 87.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Organic Search",
+     "sessions": 19.0
     },
     {
      "sessionDefaultChannelGroup": "Organic Social",
-     "sessions": 5.0
+     "sessions": 13.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Unassigned",
+     "sessions": 4.0
+    },
+    {
+     "sessionDefaultChannelGroup": "AI Assistant",
+     "sessions": 2.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Referral",
+     "sessions": 1.0
     }
    ],
    "countries": [
     {
      "country": "United States",
-     "activeUsers": 15.0,
-     "sessions": 15.0
-    },
-    {
-     "country": "Canada",
-     "activeUsers": 4.0,
-     "sessions": 5.0
-    },
-    {
-     "country": "",
-     "activeUsers": 3.0,
-     "sessions": 3.0
-    },
-    {
-     "country": "Singapore",
-     "activeUsers": 3.0,
-     "sessions": 3.0
-    },
-    {
-     "country": "Brazil",
-     "activeUsers": 2.0,
-     "sessions": 2.0
-    },
-    {
-     "country": "Nigeria",
-     "activeUsers": 2.0,
-     "sessions": 2.0
+     "activeUsers": 30.0,
+     "sessions": 30.0
     },
     {
      "country": "Bangladesh",
+     "activeUsers": 29.0,
+     "sessions": 33.0
+    },
+    {
+     "country": "Canada",
+     "activeUsers": 10.0,
+     "sessions": 13.0
+    },
+    {
+     "country": "Colombia",
+     "activeUsers": 9.0,
+     "sessions": 10.0
+    },
+    {
+     "country": "Singapore",
+     "activeUsers": 9.0,
+     "sessions": 9.0
+    },
+    {
+     "country": "Nigeria",
+     "activeUsers": 5.0,
+     "sessions": 6.0
+    },
+    {
+     "country": "Brazil",
+     "activeUsers": 4.0,
+     "sessions": 4.0
+    },
+    {
+     "country": "(not set)",
+     "activeUsers": 3.0,
+     "sessions": 3.0
+    },
+    {
+     "country": "Pakistan",
+     "activeUsers": 2.0,
+     "sessions": 2.0
+    },
+    {
+     "country": "Argentina",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
     {
-     "country": "Colombia",
+     "country": "Ecuador",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "France",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Ghana",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Guatemala",
+     "activeUsers": 1.0,
+     "sessions": 3.0
+    },
+    {
+     "country": "Hong Kong",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Hungary",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
@@ -314,7 +501,17 @@
      "sessions": 1.0
     },
     {
+     "country": "Indonesia",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
      "country": "Ireland",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Malaysia",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
@@ -329,6 +526,11 @@
      "sessions": 1.0
     },
     {
+     "country": "Sweden",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
      "country": "T\u00fcrkiye",
      "activeUsers": 1.0,
      "sessions": 1.0
@@ -337,26 +539,55 @@
    "devices": [
     {
      "deviceCategory": "desktop",
-     "activeUsers": 23.0,
-     "sessions": 23.0
+     "activeUsers": 66.0,
+     "sessions": 71.0
     },
     {
      "deviceCategory": "mobile",
-     "activeUsers": 11.0,
-     "sessions": 12.0
+     "activeUsers": 46.0,
+     "sessions": 52.0
+    },
+    {
+     "deviceCategory": "tablet",
+     "activeUsers": 1.0,
+     "sessions": 1.0
     }
    ],
    "sources": [
     {
      "sessionSource": "(direct)",
-     "sessions": 30.0
+     "sessions": 87.0
+    },
+    {
+     "sessionSource": "google",
+     "sessions": 17.0
     },
     {
      "sessionSource": "m.facebook.com",
+     "sessions": 9.0
+    },
+    {
+     "sessionSource": "(not set)",
      "sessions": 4.0
     },
     {
+     "sessionSource": "bing",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "chatgpt.com",
+     "sessions": 2.0
+    },
+    {
      "sessionSource": "l.instagram.com",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "lm.facebook.com",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "mail.google.com",
      "sessions": 1.0
     }
    ]
@@ -364,13 +595,13 @@
   "90d": {
    "kpis": {
     "current": {
-     "activeUsers": 34.0,
-     "newUsers": 34.0,
-     "sessions": 35.0,
-     "screenPageViews": 37.0,
-     "engagementRate": 0.17142857142857143,
-     "averageSessionDuration": 28.449563457142858,
-     "bounceRate": 0.8285714285714286
+     "activeUsers": 111.0,
+     "newUsers": 111.0,
+     "sessions": 122.0,
+     "screenPageViews": 182.0,
+     "engagementRate": 0.4344262295081967,
+     "averageSessionDuration": 88.69820904918033,
+     "bounceRate": 0.5655737704918032
     },
     "previous": {
      "activeUsers": 0.0,
@@ -386,14 +617,38 @@
     {
      "pagePath": "/welfare/impact25",
      "pageTitle": "Impact25 Awards \u2014 BacharLorai Global",
-     "screenPageViews": 19.0,
-     "activeUsers": 19.0
+     "screenPageViews": 73.0,
+     "activeUsers": 58.0
     },
     {
      "pagePath": "/",
      "pageTitle": "BacharLorai Global",
-     "screenPageViews": 8.0,
+     "screenPageViews": 35.0,
+     "activeUsers": 25.0
+    },
+    {
+     "pagePath": "/research/youth-voices",
+     "pageTitle": "Youth Voices Policy Essay Competition \u2014 BacharLorai Global",
+     "screenPageViews": 21.0,
+     "activeUsers": 13.0
+    },
+    {
+     "pagePath": "/impact25under25",
+     "pageTitle": "BacharLorai",
+     "screenPageViews": 13.0,
      "activeUsers": 7.0
+    },
+    {
+     "pagePath": "/community/impact-social",
+     "pageTitle": "Impact Social \u2014 BacharLorai Global",
+     "screenPageViews": 4.0,
+     "activeUsers": 3.0
+    },
+    {
+     "pagePath": "/opportunities",
+     "pageTitle": "Opportunities \u2014 BacharLorai Global",
+     "screenPageViews": 4.0,
+     "activeUsers": 5.0
     },
     {
      "pagePath": "/banglatown-ethnography/blog-post-title-one-xj9d5-wfe8x-w8n2x-9e44h-g8478-9znwg",
@@ -402,84 +657,128 @@
      "activeUsers": 3.0
     },
     {
-     "pagePath": "/community/impact-social",
-     "pageTitle": "Impact Social \u2014 BacharLorai Global",
-     "screenPageViews": 2.0,
+     "pagePath": "/community/ueccasecompetition25",
+     "pageTitle": "BacharLorai",
+     "screenPageViews": 3.0,
+     "activeUsers": 3.0
+    },
+    {
+     "pagePath": "/welfare/humanitarian-aid",
+     "pageTitle": "Humanitarian Aid \u2014 BacharLorai Global",
+     "screenPageViews": 3.0,
      "activeUsers": 1.0
     },
     {
-     "pagePath": "/research/youth-voices",
-     "pageTitle": "Youth Voices Policy Essay Competition \u2014 BacharLorai Global",
+     "pagePath": "/blg",
+     "pageTitle": "About Us \u2014 BacharLorai Global",
      "screenPageViews": 2.0,
      "activeUsers": 2.0
-    },
-    {
-     "pagePath": "/people",
-     "pageTitle": "People \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
-    },
-    {
-     "pagePath": "/research/23-24/policybrief/endingperiodpoverty",
-     "pageTitle": "23-24 Policy Brief - Ending Period Poverty \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
-    },
-    {
-     "pagePath": "/welfare/humanitarian/zero-gap-fund",
-     "pageTitle": "Zero Gap Education \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
     }
    ],
    "channels": [
     {
      "sessionDefaultChannelGroup": "Direct",
-     "sessions": 30.0
+     "sessions": 87.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Organic Search",
+     "sessions": 19.0
     },
     {
      "sessionDefaultChannelGroup": "Organic Social",
-     "sessions": 5.0
+     "sessions": 13.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Unassigned",
+     "sessions": 4.0
+    },
+    {
+     "sessionDefaultChannelGroup": "AI Assistant",
+     "sessions": 2.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Referral",
+     "sessions": 1.0
     }
    ],
    "countries": [
     {
      "country": "United States",
-     "activeUsers": 15.0,
-     "sessions": 15.0
-    },
-    {
-     "country": "Canada",
-     "activeUsers": 4.0,
-     "sessions": 5.0
-    },
-    {
-     "country": "",
-     "activeUsers": 3.0,
-     "sessions": 3.0
-    },
-    {
-     "country": "Singapore",
-     "activeUsers": 3.0,
-     "sessions": 3.0
-    },
-    {
-     "country": "Brazil",
-     "activeUsers": 2.0,
-     "sessions": 2.0
-    },
-    {
-     "country": "Nigeria",
-     "activeUsers": 2.0,
-     "sessions": 2.0
+     "activeUsers": 30.0,
+     "sessions": 30.0
     },
     {
      "country": "Bangladesh",
+     "activeUsers": 29.0,
+     "sessions": 33.0
+    },
+    {
+     "country": "Canada",
+     "activeUsers": 10.0,
+     "sessions": 13.0
+    },
+    {
+     "country": "Colombia",
+     "activeUsers": 9.0,
+     "sessions": 10.0
+    },
+    {
+     "country": "Singapore",
+     "activeUsers": 9.0,
+     "sessions": 9.0
+    },
+    {
+     "country": "Nigeria",
+     "activeUsers": 5.0,
+     "sessions": 6.0
+    },
+    {
+     "country": "Brazil",
+     "activeUsers": 4.0,
+     "sessions": 4.0
+    },
+    {
+     "country": "(not set)",
+     "activeUsers": 3.0,
+     "sessions": 3.0
+    },
+    {
+     "country": "Pakistan",
+     "activeUsers": 2.0,
+     "sessions": 2.0
+    },
+    {
+     "country": "Argentina",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
     {
-     "country": "Colombia",
+     "country": "Ecuador",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "France",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Ghana",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Guatemala",
+     "activeUsers": 1.0,
+     "sessions": 3.0
+    },
+    {
+     "country": "Hong Kong",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Hungary",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
@@ -489,7 +788,17 @@
      "sessions": 1.0
     },
     {
+     "country": "Indonesia",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
      "country": "Ireland",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Malaysia",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
@@ -504,6 +813,11 @@
      "sessions": 1.0
     },
     {
+     "country": "Sweden",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
      "country": "T\u00fcrkiye",
      "activeUsers": 1.0,
      "sessions": 1.0
@@ -512,26 +826,55 @@
    "devices": [
     {
      "deviceCategory": "desktop",
-     "activeUsers": 23.0,
-     "sessions": 23.0
+     "activeUsers": 66.0,
+     "sessions": 71.0
     },
     {
      "deviceCategory": "mobile",
-     "activeUsers": 11.0,
-     "sessions": 12.0
+     "activeUsers": 46.0,
+     "sessions": 52.0
+    },
+    {
+     "deviceCategory": "tablet",
+     "activeUsers": 1.0,
+     "sessions": 1.0
     }
    ],
    "sources": [
     {
      "sessionSource": "(direct)",
-     "sessions": 30.0
+     "sessions": 87.0
+    },
+    {
+     "sessionSource": "google",
+     "sessions": 17.0
     },
     {
      "sessionSource": "m.facebook.com",
+     "sessions": 9.0
+    },
+    {
+     "sessionSource": "(not set)",
      "sessions": 4.0
     },
     {
+     "sessionSource": "bing",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "chatgpt.com",
+     "sessions": 2.0
+    },
+    {
      "sessionSource": "l.instagram.com",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "lm.facebook.com",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "mail.google.com",
      "sessions": 1.0
     }
    ]
@@ -539,13 +882,13 @@
   "365d": {
    "kpis": {
     "current": {
-     "activeUsers": 34.0,
-     "newUsers": 34.0,
-     "sessions": 35.0,
-     "screenPageViews": 37.0,
-     "engagementRate": 0.17142857142857143,
-     "averageSessionDuration": 28.449563457142858,
-     "bounceRate": 0.8285714285714286
+     "activeUsers": 111.0,
+     "newUsers": 111.0,
+     "sessions": 122.0,
+     "screenPageViews": 182.0,
+     "engagementRate": 0.4344262295081967,
+     "averageSessionDuration": 88.69820904918035,
+     "bounceRate": 0.5655737704918032
     },
     "previous": {
      "activeUsers": 0.0,
@@ -561,14 +904,38 @@
     {
      "pagePath": "/welfare/impact25",
      "pageTitle": "Impact25 Awards \u2014 BacharLorai Global",
-     "screenPageViews": 19.0,
-     "activeUsers": 19.0
+     "screenPageViews": 73.0,
+     "activeUsers": 58.0
     },
     {
      "pagePath": "/",
      "pageTitle": "BacharLorai Global",
-     "screenPageViews": 8.0,
+     "screenPageViews": 35.0,
+     "activeUsers": 25.0
+    },
+    {
+     "pagePath": "/research/youth-voices",
+     "pageTitle": "Youth Voices Policy Essay Competition \u2014 BacharLorai Global",
+     "screenPageViews": 21.0,
+     "activeUsers": 13.0
+    },
+    {
+     "pagePath": "/impact25under25",
+     "pageTitle": "BacharLorai",
+     "screenPageViews": 13.0,
      "activeUsers": 7.0
+    },
+    {
+     "pagePath": "/community/impact-social",
+     "pageTitle": "Impact Social \u2014 BacharLorai Global",
+     "screenPageViews": 4.0,
+     "activeUsers": 3.0
+    },
+    {
+     "pagePath": "/opportunities",
+     "pageTitle": "Opportunities \u2014 BacharLorai Global",
+     "screenPageViews": 4.0,
+     "activeUsers": 5.0
     },
     {
      "pagePath": "/banglatown-ethnography/blog-post-title-one-xj9d5-wfe8x-w8n2x-9e44h-g8478-9znwg",
@@ -577,84 +944,128 @@
      "activeUsers": 3.0
     },
     {
-     "pagePath": "/community/impact-social",
-     "pageTitle": "Impact Social \u2014 BacharLorai Global",
-     "screenPageViews": 2.0,
+     "pagePath": "/community/ueccasecompetition25",
+     "pageTitle": "BacharLorai",
+     "screenPageViews": 3.0,
+     "activeUsers": 3.0
+    },
+    {
+     "pagePath": "/welfare/humanitarian-aid",
+     "pageTitle": "Humanitarian Aid \u2014 BacharLorai Global",
+     "screenPageViews": 3.0,
      "activeUsers": 1.0
     },
     {
-     "pagePath": "/research/youth-voices",
-     "pageTitle": "Youth Voices Policy Essay Competition \u2014 BacharLorai Global",
+     "pagePath": "/blg",
+     "pageTitle": "About Us \u2014 BacharLorai Global",
      "screenPageViews": 2.0,
      "activeUsers": 2.0
-    },
-    {
-     "pagePath": "/people",
-     "pageTitle": "People \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
-    },
-    {
-     "pagePath": "/research/23-24/policybrief/endingperiodpoverty",
-     "pageTitle": "23-24 Policy Brief - Ending Period Poverty \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
-    },
-    {
-     "pagePath": "/welfare/humanitarian/zero-gap-fund",
-     "pageTitle": "Zero Gap Education \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
     }
    ],
    "channels": [
     {
      "sessionDefaultChannelGroup": "Direct",
-     "sessions": 30.0
+     "sessions": 87.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Organic Search",
+     "sessions": 19.0
     },
     {
      "sessionDefaultChannelGroup": "Organic Social",
-     "sessions": 5.0
+     "sessions": 13.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Unassigned",
+     "sessions": 4.0
+    },
+    {
+     "sessionDefaultChannelGroup": "AI Assistant",
+     "sessions": 2.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Referral",
+     "sessions": 1.0
     }
    ],
    "countries": [
     {
      "country": "United States",
-     "activeUsers": 15.0,
-     "sessions": 15.0
-    },
-    {
-     "country": "Canada",
-     "activeUsers": 4.0,
-     "sessions": 5.0
-    },
-    {
-     "country": "",
-     "activeUsers": 3.0,
-     "sessions": 3.0
-    },
-    {
-     "country": "Singapore",
-     "activeUsers": 3.0,
-     "sessions": 3.0
-    },
-    {
-     "country": "Brazil",
-     "activeUsers": 2.0,
-     "sessions": 2.0
-    },
-    {
-     "country": "Nigeria",
-     "activeUsers": 2.0,
-     "sessions": 2.0
+     "activeUsers": 30.0,
+     "sessions": 30.0
     },
     {
      "country": "Bangladesh",
+     "activeUsers": 29.0,
+     "sessions": 33.0
+    },
+    {
+     "country": "Canada",
+     "activeUsers": 10.0,
+     "sessions": 13.0
+    },
+    {
+     "country": "Colombia",
+     "activeUsers": 9.0,
+     "sessions": 10.0
+    },
+    {
+     "country": "Singapore",
+     "activeUsers": 9.0,
+     "sessions": 9.0
+    },
+    {
+     "country": "Nigeria",
+     "activeUsers": 5.0,
+     "sessions": 6.0
+    },
+    {
+     "country": "Brazil",
+     "activeUsers": 4.0,
+     "sessions": 4.0
+    },
+    {
+     "country": "(not set)",
+     "activeUsers": 3.0,
+     "sessions": 3.0
+    },
+    {
+     "country": "Pakistan",
+     "activeUsers": 2.0,
+     "sessions": 2.0
+    },
+    {
+     "country": "Argentina",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
     {
-     "country": "Colombia",
+     "country": "Ecuador",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "France",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Ghana",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Guatemala",
+     "activeUsers": 1.0,
+     "sessions": 3.0
+    },
+    {
+     "country": "Hong Kong",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Hungary",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
@@ -664,7 +1075,17 @@
      "sessions": 1.0
     },
     {
+     "country": "Indonesia",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
      "country": "Ireland",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Malaysia",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
@@ -679,6 +1100,11 @@
      "sessions": 1.0
     },
     {
+     "country": "Sweden",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
      "country": "T\u00fcrkiye",
      "activeUsers": 1.0,
      "sessions": 1.0
@@ -687,26 +1113,55 @@
    "devices": [
     {
      "deviceCategory": "desktop",
-     "activeUsers": 23.0,
-     "sessions": 23.0
+     "activeUsers": 66.0,
+     "sessions": 71.0
     },
     {
      "deviceCategory": "mobile",
-     "activeUsers": 11.0,
-     "sessions": 12.0
+     "activeUsers": 46.0,
+     "sessions": 52.0
+    },
+    {
+     "deviceCategory": "tablet",
+     "activeUsers": 1.0,
+     "sessions": 1.0
     }
    ],
    "sources": [
     {
      "sessionSource": "(direct)",
-     "sessions": 30.0
+     "sessions": 87.0
+    },
+    {
+     "sessionSource": "google",
+     "sessions": 17.0
     },
     {
      "sessionSource": "m.facebook.com",
+     "sessions": 9.0
+    },
+    {
+     "sessionSource": "(not set)",
      "sessions": 4.0
     },
     {
+     "sessionSource": "bing",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "chatgpt.com",
+     "sessions": 2.0
+    },
+    {
      "sessionSource": "l.instagram.com",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "lm.facebook.com",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "mail.google.com",
      "sessions": 1.0
     }
    ]
@@ -714,13 +1169,13 @@
   "all": {
    "kpis": {
     "current": {
-     "activeUsers": 34.0,
-     "newUsers": 34.0,
-     "sessions": 35.0,
-     "screenPageViews": 37.0,
-     "engagementRate": 0.17142857142857143,
-     "averageSessionDuration": 28.449563457142858,
-     "bounceRate": 0.8285714285714286
+     "activeUsers": 111.0,
+     "newUsers": 111.0,
+     "sessions": 122.0,
+     "screenPageViews": 182.0,
+     "engagementRate": 0.4344262295081967,
+     "averageSessionDuration": 88.69820904918035,
+     "bounceRate": 0.5655737704918032
     },
     "previous": null
    },
@@ -728,14 +1183,38 @@
     {
      "pagePath": "/welfare/impact25",
      "pageTitle": "Impact25 Awards \u2014 BacharLorai Global",
-     "screenPageViews": 19.0,
-     "activeUsers": 19.0
+     "screenPageViews": 73.0,
+     "activeUsers": 58.0
     },
     {
      "pagePath": "/",
      "pageTitle": "BacharLorai Global",
-     "screenPageViews": 8.0,
+     "screenPageViews": 35.0,
+     "activeUsers": 25.0
+    },
+    {
+     "pagePath": "/research/youth-voices",
+     "pageTitle": "Youth Voices Policy Essay Competition \u2014 BacharLorai Global",
+     "screenPageViews": 21.0,
+     "activeUsers": 13.0
+    },
+    {
+     "pagePath": "/impact25under25",
+     "pageTitle": "BacharLorai",
+     "screenPageViews": 13.0,
      "activeUsers": 7.0
+    },
+    {
+     "pagePath": "/community/impact-social",
+     "pageTitle": "Impact Social \u2014 BacharLorai Global",
+     "screenPageViews": 4.0,
+     "activeUsers": 3.0
+    },
+    {
+     "pagePath": "/opportunities",
+     "pageTitle": "Opportunities \u2014 BacharLorai Global",
+     "screenPageViews": 4.0,
+     "activeUsers": 5.0
     },
     {
      "pagePath": "/banglatown-ethnography/blog-post-title-one-xj9d5-wfe8x-w8n2x-9e44h-g8478-9znwg",
@@ -744,84 +1223,128 @@
      "activeUsers": 3.0
     },
     {
-     "pagePath": "/community/impact-social",
-     "pageTitle": "Impact Social \u2014 BacharLorai Global",
-     "screenPageViews": 2.0,
+     "pagePath": "/community/ueccasecompetition25",
+     "pageTitle": "BacharLorai",
+     "screenPageViews": 3.0,
+     "activeUsers": 3.0
+    },
+    {
+     "pagePath": "/welfare/humanitarian-aid",
+     "pageTitle": "Humanitarian Aid \u2014 BacharLorai Global",
+     "screenPageViews": 3.0,
      "activeUsers": 1.0
     },
     {
-     "pagePath": "/research/youth-voices",
-     "pageTitle": "Youth Voices Policy Essay Competition \u2014 BacharLorai Global",
+     "pagePath": "/blg",
+     "pageTitle": "About Us \u2014 BacharLorai Global",
      "screenPageViews": 2.0,
      "activeUsers": 2.0
-    },
-    {
-     "pagePath": "/people",
-     "pageTitle": "People \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
-    },
-    {
-     "pagePath": "/research/23-24/policybrief/endingperiodpoverty",
-     "pageTitle": "23-24 Policy Brief - Ending Period Poverty \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
-    },
-    {
-     "pagePath": "/welfare/humanitarian/zero-gap-fund",
-     "pageTitle": "Zero Gap Education \u2014 BacharLorai Global",
-     "screenPageViews": 1.0,
-     "activeUsers": 1.0
     }
    ],
    "channels": [
     {
      "sessionDefaultChannelGroup": "Direct",
-     "sessions": 30.0
+     "sessions": 87.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Organic Search",
+     "sessions": 19.0
     },
     {
      "sessionDefaultChannelGroup": "Organic Social",
-     "sessions": 5.0
+     "sessions": 13.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Unassigned",
+     "sessions": 4.0
+    },
+    {
+     "sessionDefaultChannelGroup": "AI Assistant",
+     "sessions": 2.0
+    },
+    {
+     "sessionDefaultChannelGroup": "Referral",
+     "sessions": 1.0
     }
    ],
    "countries": [
     {
      "country": "United States",
-     "activeUsers": 15.0,
-     "sessions": 15.0
-    },
-    {
-     "country": "Canada",
-     "activeUsers": 4.0,
-     "sessions": 5.0
-    },
-    {
-     "country": "",
-     "activeUsers": 3.0,
-     "sessions": 3.0
-    },
-    {
-     "country": "Singapore",
-     "activeUsers": 3.0,
-     "sessions": 3.0
-    },
-    {
-     "country": "Brazil",
-     "activeUsers": 2.0,
-     "sessions": 2.0
-    },
-    {
-     "country": "Nigeria",
-     "activeUsers": 2.0,
-     "sessions": 2.0
+     "activeUsers": 30.0,
+     "sessions": 30.0
     },
     {
      "country": "Bangladesh",
+     "activeUsers": 29.0,
+     "sessions": 33.0
+    },
+    {
+     "country": "Canada",
+     "activeUsers": 10.0,
+     "sessions": 13.0
+    },
+    {
+     "country": "Colombia",
+     "activeUsers": 9.0,
+     "sessions": 10.0
+    },
+    {
+     "country": "Singapore",
+     "activeUsers": 9.0,
+     "sessions": 9.0
+    },
+    {
+     "country": "Nigeria",
+     "activeUsers": 5.0,
+     "sessions": 6.0
+    },
+    {
+     "country": "Brazil",
+     "activeUsers": 4.0,
+     "sessions": 4.0
+    },
+    {
+     "country": "(not set)",
+     "activeUsers": 3.0,
+     "sessions": 3.0
+    },
+    {
+     "country": "Pakistan",
+     "activeUsers": 2.0,
+     "sessions": 2.0
+    },
+    {
+     "country": "Argentina",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
     {
-     "country": "Colombia",
+     "country": "Ecuador",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "France",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Ghana",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Guatemala",
+     "activeUsers": 1.0,
+     "sessions": 3.0
+    },
+    {
+     "country": "Hong Kong",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Hungary",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
@@ -831,7 +1354,17 @@
      "sessions": 1.0
     },
     {
+     "country": "Indonesia",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
      "country": "Ireland",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
+     "country": "Malaysia",
      "activeUsers": 1.0,
      "sessions": 1.0
     },
@@ -846,6 +1379,11 @@
      "sessions": 1.0
     },
     {
+     "country": "Sweden",
+     "activeUsers": 1.0,
+     "sessions": 1.0
+    },
+    {
      "country": "T\u00fcrkiye",
      "activeUsers": 1.0,
      "sessions": 1.0
@@ -854,26 +1392,55 @@
    "devices": [
     {
      "deviceCategory": "desktop",
-     "activeUsers": 23.0,
-     "sessions": 23.0
+     "activeUsers": 66.0,
+     "sessions": 71.0
     },
     {
      "deviceCategory": "mobile",
-     "activeUsers": 11.0,
-     "sessions": 12.0
+     "activeUsers": 46.0,
+     "sessions": 52.0
+    },
+    {
+     "deviceCategory": "tablet",
+     "activeUsers": 1.0,
+     "sessions": 1.0
     }
    ],
    "sources": [
     {
      "sessionSource": "(direct)",
-     "sessions": 30.0
+     "sessions": 87.0
+    },
+    {
+     "sessionSource": "google",
+     "sessions": 17.0
     },
     {
      "sessionSource": "m.facebook.com",
+     "sessions": 9.0
+    },
+    {
+     "sessionSource": "(not set)",
      "sessions": 4.0
     },
     {
+     "sessionSource": "bing",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "chatgpt.com",
+     "sessions": 2.0
+    },
+    {
      "sessionSource": "l.instagram.com",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "lm.facebook.com",
+     "sessions": 2.0
+    },
+    {
+     "sessionSource": "mail.google.com",
      "sessions": 1.0
     }
    ]
